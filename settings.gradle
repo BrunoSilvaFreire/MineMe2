@@ -1,0 +1,3 @@
+include ":mineme-craft", ":mineme-api", ":mineme-requests", ":mineme-server"
+rootProject.name = 'mineme'
+

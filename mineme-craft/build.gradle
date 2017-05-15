@@ -1,0 +1,29 @@
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'kotlin'
+dependencies {
+    compile "me.ddevil:shiroi-framework-craft-api:$shiroi_ver"
+    compile "me.ddevil:shiroi-framework-ui-shiroi:$shiroi_ver"
+    compile "com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT"
+    compile group: 'minecraft', name: 'holographic-displays', version: '2.2'
+    compile project(':mineme-api')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+shadowJar {
+    dependencies {
+        include(project(":mineme-api"))
+        include(dependency("org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"))
+        include(dependency('org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version'))
+        include(dependency('co.aikar:taskchain-bukkit:3.4.3'))
+        include(dependency('co.aikar:taskchain-core:3.4.3'))
+        include(dependency("me.ddevil:shiroi-framework-util:$shiroi_ver"))
+        include(dependency("me.ddevil:shiroi-framework-craft-api:$shiroi_ver"))
+        include(dependency("me.ddevil:shiroi-framework-craft-internal:$shiroi_ver"))
+        include(dependency("me.ddevil:shiroi-framework-ui-api:$shiroi_ver"))
+        include(dependency("me.ddevil:shiroi-framework-ui-internal:$shiroi_ver"))
+        include(dependency("me.ddevil:shiroi-framework-ui-shiroi:$shiroi_ver"))
+    }
+}
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}

@@ -1,0 +1,27 @@
+plugin:
+  colorDesign:
+    primaryColor: YELLOW
+    secondaryColor: GREEN
+    neutralColor: GRAY
+    warningColor: RED
+    successColor: GREEN
+  holograms:
+    enabled: false
+    provider: HOLOGRAPHIC_DISPLAYS
+mines:
+  composition:
+    commonMaterials:
+      - STONE
+      - COBBLESTONE
+      - SANDSTONE
+      - NETHERRACK
+  defaults:
+     reset:
+       executor:
+         type: SYNC
+         async:
+           tickDelay: 1
+    repopulator: 'normal'
+    icon:
+      type: REDSTONE_BLOCK
+    resetDelay: 300

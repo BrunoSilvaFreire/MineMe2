@@ -1,0 +1,21 @@
+resources:
+  primaryBackground:
+    type: 'IRON_FENCE'
+    name: '&r'
+  secondaryBackground:
+    type: 'STAINED_GLASS_PANE'
+    data: 15
+    name: '&r'
+  teleportButton:
+    type: 'ENDER_PEARL'
+    name: '$1Teleport to mine location!'
+    lore:
+      - '$3The spawn location will be'
+      - '$3the top-y-center of the mine :)'
+  resetButton:
+    type: 'WOOD_PICKAXE'
+    data: 0
+    name: '$1Reset mine'
+    lore:
+      - '$1Forces the mine to reset'
+      - '$1like... $4RIGHT NOW!'
