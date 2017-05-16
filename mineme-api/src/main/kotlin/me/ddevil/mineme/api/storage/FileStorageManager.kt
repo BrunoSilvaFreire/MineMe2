@@ -7,20 +7,18 @@ import me.ddevil.mineme.api.composition.MineComposition
 import me.ddevil.mineme.api.mine.MineInfo
 import java.io.File
 
-class FileStorageManager(
-        val mainFolder: File,
-        val api: MineMeAPI
-) : StorageManager {
+class FileStorageManager : StorageManager {
 
 
-    private val jsonParser = JsonParser()
-    val minesFolder: File
-    val compositionsFolder: File
+    val mainFolder: File
+    lateinit var api: MineMeAPI
 
-    private val loadedCompositions = HashMap<String, MineComposition>()
-    private val loadedMines = HashMap<String, MineInfo>()
-
-    init {
+    constructor(mainFolder: File, api: MineMeAPI) {
+        this.mainFolder = mainFolder
+        this.api = api
+        this.jsonParser = JsonParser()
+        this.loadedCompositions = HashMap<String, MineComposition>()
+        this.loadedMines = HashMap<String, MineInfo>()
         if (!mainFolder.exists()) {
             mainFolder.mkdirs()
         }
@@ -28,12 +26,18 @@ class FileStorageManager(
         if (minesFolder.exists()) {
             minesFolder.mkdirs()
         }
-
         this.compositionsFolder = File(mainFolder, MineMeConstants.COMPOSITION_FOLDER_NAME)
         if (compositionsFolder.exists()) {
             compositionsFolder.mkdirs()
         }
     }
+
+    private val jsonParser: JsonParser
+    val minesFolder: File
+    val compositionsFolder: File
+
+    private val loadedCompositions: HashMap<String, MineComposition>
+    private val loadedMines: HashMap<String, MineInfo>
 
     override fun getComposition(name: String): MineComposition? = loadedCompositions.getOrPut(name) {
         val compositionFile = getCompositionFile(name)

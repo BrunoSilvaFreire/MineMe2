@@ -1,45 +1,22 @@
 package me.ddevil.mineme.api.request
 
-import me.ddevil.json.parse.JsonParser
-import me.ddevil.mineme.api.MineMeConstants
+import me.ddevil.json.JsonObject
 import me.ddevil.mineme.api.composition.MineComposition
-import org.apache.http.client.HttpClient
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.methods.HttpUriRequest
 import java.util.*
 
-class MineCompositionRequest : MineMeRequest<MineComposition> {
+class MineCompositionRequest : SearchRequest<MineComposition> {
 
 
-    class UUIDSearchMethod(val uuid: UUID) : MineCompositionRequest.SearchMethod {
-        override fun createRequest() = HttpGet("${MineMeConstants.API_BASE_URL}composition/uuid/$uuid")
-
+    companion object {
+        const val COMPOSITION_SEARCH_URL = "composition"
     }
 
-    class NameSearchMethod(val name: String) : MineCompositionRequest.SearchMethod {
-        override fun createRequest() = HttpGet("${MineMeConstants.API_BASE_URL}composition/name/$name")
+    constructor(name: String) : super(name, COMPOSITION_SEARCH_URL)
 
-    }
+    constructor(uuid: UUID) : super(uuid, COMPOSITION_SEARCH_URL)
 
-    interface SearchMethod {
 
-        fun createRequest(): HttpUriRequest
-    }
-
-    constructor(name: String) : this(NameSearchMethod(name))
-
-    constructor(uuid: UUID) : this(UUIDSearchMethod(uuid))
-
-    private val searchMethod: SearchMethod
-
-    constructor(searchMethod: SearchMethod) {
-        this.searchMethod = searchMethod
-    }
-
-    override fun execute(client: HttpClient): MineComposition {
-        val request = searchMethod.createRequest()
-        val content = client.execute(request).entity.content
-        val json = JsonParser().parseObject(content)
-        return MineComposition(json)
-    }
+    override fun parse(json: JsonObject) = MineComposition(json)
 }
+
+
