@@ -2,8 +2,9 @@ package me.ddevil.mineme.craft.mine
 
 import co.aikar.taskchain.TaskChainTasks
 import com.sk89q.worldedit.regions.Region
-import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.api.MineMeConstants
+import me.ddevil.mineme.api.composition.MineComposition
+import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.craft.api.MineMeCraftConstants
 import me.ddevil.mineme.craft.api.mine.*
 import me.ddevil.mineme.craft.api.mine.executor.MineResetExecutor
@@ -12,13 +13,12 @@ import me.ddevil.mineme.craft.config.MineMeConfigValue
 import me.ddevil.mineme.craft.mine.loader.CuboidLoader
 import me.ddevil.mineme.craft.mine.repopulator.EmptyRepopulator
 import me.ddevil.mineme.craft.mine.repopulator.NormalRepopulator
-import me.ddevil.mineme.api.composition.MineComposition
 import me.ddevil.shiroi.craft.log.DebugLevel
 import me.ddevil.shiroi.craft.util.getOrException
 import me.ddevil.shiroi.craft.util.parseConfig
 import me.ddevil.shiroi.craft.util.set
 import me.ddevil.shiroi.craft.util.toMap
-import me.ddevil.shiroi.util.serialization.Serializable
+import me.ddevil.util.Serializable
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
 import java.io.File
@@ -48,8 +48,8 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
     init {
         registeredRepopulators = mutableSetOf(*createDefaultRepopulators())
         registeredLoaders = mutableSetOf(*createDefaultLoaders())
-        this.minesFolder = File(plugin.dataFolder, MineMeCraftConstants.MINE_FOLDER_NAME)
-        this.compositionsFolder = File(plugin.dataFolder, MineMeCraftConstants.COMPOSITION_FOLDER_NAME)
+        this.minesFolder = File(plugin.dataFolder, MineMeConstants.MINE_FOLDER_NAME)
+        this.compositionsFolder = File(plugin.dataFolder, MineMeConstants.COMPOSITION_FOLDER_NAME)
         this.defaultExecutor = MineResetExecutorType.getType(plugin.configManager.getValue(MineMeConfigValue.DEFAULT_MINE_RESET_EXECUTOR))
     }
 
@@ -79,7 +79,7 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
     }
 
     override fun enable() {
-        this.defaultMineIcon = parseConfig(plugin.configManager.getValue(MineMeConfigValue.DEFAULT_MINE_ICON))
+        this.defaultMineIcon = parseConfig(plugin.configManager.getValue(MineMeConfigValue.DEFAULT_MINE_ICON), plugin.messageManager)
         loadCompositionsAndMines()
     }
 
@@ -175,7 +175,7 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
         for (file in compositionsFolder.listFiles()) {
             if (file.extension == MineMeCraftConstants.DEFAULT_FILE_EXTENSION) {
                 val config = YamlConfiguration.loadConfiguration(file)
-                val mine = MineComposition(config.toMap(), plugin.networkManager)
+                val mine = MineComposition(config.toMap())
                 compositions.add(mine)
                 plugin.pluginLogger.log("Composition ${mine.name} loaded.")
             } else {

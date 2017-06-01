@@ -1,7 +1,7 @@
 package me.ddevil.mineme.craft.mine.repopulator
 
 import me.ddevil.mineme.craft.api.mine.Mine
-import me.ddevil.shiroi.craft.toBukkit
+import me.ddevil.shiroi.craft.util.toBukkit
 import org.bukkit.Material
 
 class NormalRepopulator

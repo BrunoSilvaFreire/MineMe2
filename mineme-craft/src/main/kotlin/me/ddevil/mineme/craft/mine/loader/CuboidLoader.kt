@@ -1,15 +1,11 @@
 package me.ddevil.mineme.craft.mine.loader
 
 import com.sk89q.worldedit.regions.CuboidRegion
-import com.sk89q.worldedit.regions.Region
-import me.ddevil.mineme.craft.api.mine.Mine
-import me.ddevil.mineme.craft.api.mine.MineLoader
-import me.ddevil.mineme.craft.api.mine.MineType
-import me.ddevil.mineme.craft.MineMe
-import me.ddevil.mineme.craft.mine.internal.CuboidMine
 import me.ddevil.mineme.api.composition.MineComposition
-
-abstract class AbstractLoader<R : Region>(val plugin: MineMe) : MineLoader<R>
+import me.ddevil.mineme.craft.MineMe
+import me.ddevil.mineme.craft.api.mine.Mine
+import me.ddevil.mineme.craft.api.mine.MineType
+import me.ddevil.mineme.craft.mine.CuboidMine
 
 class CuboidLoader(plugin: MineMe) : AbstractLoader<CuboidRegion>(plugin) {
 

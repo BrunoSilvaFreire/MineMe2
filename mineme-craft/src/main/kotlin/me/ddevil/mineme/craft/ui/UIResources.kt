@@ -1,26 +1,33 @@
 package me.ddevil.mineme.craft.ui
 
 import com.google.common.collect.ImmutableMap
-import me.ddevil.mineme.craft.config.MineMeConfigKey
-import me.ddevil.mineme.craft.config.MineMeConfigManager
+import me.ddevil.mineme.api.MineMeConstants.MATERIAL_TYPE_IDENTIFIER
+import me.ddevil.mineme.craft.config.MineMeConfigSource
 import me.ddevil.mineme.craft.config.MineMeConfigValue
-import me.ddevil.mineme.craft.message.MineMeMessageManager
+import me.ddevil.shiroi.craft.config.YAMLFileConfigManager
+import me.ddevil.shiroi.craft.message.MessageManager
 import me.ddevil.shiroi.craft.util.createConfig
 import me.ddevil.shiroi.craft.util.parseConfig
-import me.ddevil.shiroi.util.ShiroiConstants
+import me.ddevil.shiroi.util.DEFAULT_SHIROI_ITEM_DATA_IDENTIFIER
+import me.ddevil.shiroi.util.DEFAULT_SHIROI_ITEM_LORE_IDENTIFIER
+import me.ddevil.util.DEFAULT_NAME_IDENTIFIER
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import kotlin.properties.Delegates
 
 object UIResources {
 
-    var PRIMARY_BACKGROUND: ItemStack by Delegates.notNull<ItemStack>()
-    var SECONDARY_BACKGROUND: ItemStack by Delegates.notNull<ItemStack>()
-    var TELEPORT_BUTTON: ItemStack by Delegates.notNull<ItemStack>()
-    var RESET_BUTTON: ItemStack by Delegates.notNull<ItemStack>()
-    var CLEAR_BUTTON: ItemStack by Delegates.notNull<ItemStack>()
+    lateinit var PRIMARY_BACKGROUND: ItemStack
+        private set
+    lateinit var SECONDARY_BACKGROUND: ItemStack
+        private set
+    lateinit var TELEPORT_BUTTON: ItemStack
+        private set
+    lateinit var RESET_BUTTON: ItemStack
+        private set
+    lateinit var CLEAR_BUTTON: ItemStack
+        private set
 
-    fun loadItems(configManager: MineMeConfigManager, messageManager: MineMeMessageManager) {
+    fun loadItems(configManager: YAMLFileConfigManager<MineMeConfigSource>, messageManager: MessageManager) {
         this.PRIMARY_BACKGROUND = parseConfig(configManager.getValue(Keys.PRIMARY_BACKGROUND), messageManager)
         this.SECONDARY_BACKGROUND = parseConfig(configManager.getValue(Keys.SECONDARY_BACKGROUND), messageManager)
         this.TELEPORT_BUTTON = parseConfig(configManager.getValue(Keys.TELEPORT_BUTTON), messageManager)
@@ -32,57 +39,57 @@ object UIResources {
         val PRIMARY_BACKGROUND = MineMeConfigValue(
                 createConfig(
                         ImmutableMap.of(
-                                ShiroiConstants.MATERIAL_TYPE_IDENTIFIER, Material.IRON_FENCE.name,
-                                ShiroiConstants.NAME_IDENTIFIER, "&r"
+                                MATERIAL_TYPE_IDENTIFIER, Material.IRON_FENCE.name,
+                                DEFAULT_NAME_IDENTIFIER, "&r"
                         )
                 ),
-                MineMeConfigKey.GUI,
+                MineMeConfigSource.GUI,
                 "resources.primaryBackground"
         )
         val SECONDARY_BACKGROUND = MineMeConfigValue(
                 createConfig(
                         ImmutableMap.of(
-                                ShiroiConstants.MATERIAL_TYPE_IDENTIFIER, Material.STAINED_GLASS_PANE.name,
-                                ShiroiConstants.ITEM_DATA_IDENTIFIER, 15,
-                                ShiroiConstants.NAME_IDENTIFIER, "&r"
+                                MATERIAL_TYPE_IDENTIFIER, Material.STAINED_GLASS_PANE.name,
+                                DEFAULT_SHIROI_ITEM_DATA_IDENTIFIER, 15,
+                                DEFAULT_NAME_IDENTIFIER, "&r"
                         )
                 ),
-                MineMeConfigKey.GUI,
+                MineMeConfigSource.GUI,
                 "resources.secondaryBackground"
         )
         val TELEPORT_BUTTON = MineMeConfigValue(
                 createConfig(
                         ImmutableMap.builder<String, Any>()
-                                .put(ShiroiConstants.MATERIAL_TYPE_IDENTIFIER, Material.ENDER_PEARL.name)
-                                .put(ShiroiConstants.NAME_IDENTIFIER, "$2Teleport to mine location!")
+                                .put(MATERIAL_TYPE_IDENTIFIER, Material.ENDER_PEARL.name)
+                                .put(DEFAULT_NAME_IDENTIFIER, "$2Teleport to mine location!")
                                 .build()
                 ),
-                MineMeConfigKey.GUI,
+                MineMeConfigSource.GUI,
                 "resources.teleportButton"
         )
         val RESET_BUTTON = MineMeConfigValue(
                 createConfig(
                         ImmutableMap.builder<String, Any>()
-                                .put(ShiroiConstants.MATERIAL_TYPE_IDENTIFIER, Material.IRON_PICKAXE.name)
-                                .put(ShiroiConstants.NAME_IDENTIFIER, "$2Resets the mine!")
-                                .put(ShiroiConstants.ITEM_LORE_IDENTIFIER, listOf(
+                                .put(MATERIAL_TYPE_IDENTIFIER, Material.IRON_PICKAXE.name)
+                                .put(DEFAULT_NAME_IDENTIFIER, "$2Resets the mine!")
+                                .put(DEFAULT_SHIROI_ITEM_LORE_IDENTIFIER, listOf(
                                         "$3Uses the default mine repopulator",
                                         "$3and executor to reset the mine."
                                 ))
                                 .build()
                 ),
-                MineMeConfigKey.GUI,
+                MineMeConfigSource.GUI,
                 "resources.resetButton"
         )
 
         val CLEAR_BUTTON = MineMeConfigValue(
                 createConfig(
                         ImmutableMap.builder<String, Any>()
-                                .put(ShiroiConstants.MATERIAL_TYPE_IDENTIFIER, Material.IRON_PICKAXE.name)
-                                .put(ShiroiConstants.NAME_IDENTIFIER, "$2Clears the mine!")
+                                .put(MATERIAL_TYPE_IDENTIFIER, Material.IRON_PICKAXE.name)
+                                .put(DEFAULT_NAME_IDENTIFIER, "$2Clears the mine!")
                                 .build()
                 ),
-                MineMeConfigKey.GUI,
+                MineMeConfigSource.GUI,
                 "resources.resetButton"
         )
     }

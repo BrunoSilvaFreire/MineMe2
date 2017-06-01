@@ -9,4 +9,5 @@ object MineMeCraftConstants {
 
     const val HOLOGRAPHIC_DISPLAYS_NAME = "HolographicDisplays"
     const val DEFAULT_FILE_EXTENSION = "yml"
+
 }

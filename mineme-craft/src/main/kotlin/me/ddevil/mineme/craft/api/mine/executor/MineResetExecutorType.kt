@@ -2,7 +2,7 @@ package me.ddevil.mineme.craft.api.mine.executor
 
 import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.craft.api.mine.Mine
-import me.ddevil.shiroi.util.getOrException
+import me.ddevil.util.getOrException
 
 enum class MineResetExecutorType {
     SYNC {

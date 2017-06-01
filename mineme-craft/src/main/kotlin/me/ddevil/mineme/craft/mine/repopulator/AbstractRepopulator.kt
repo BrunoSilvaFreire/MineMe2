@@ -1,15 +1,10 @@
 package me.ddevil.mineme.craft.mine.repopulator
 
 import me.ddevil.mineme.craft.api.mine.MineRepopulator
-import me.ddevil.shiroi.util.misc.internal.AbstractDescribable
+import me.ddevil.util.misc.AbstractNameableDescribable
 
-abstract class AbstractRepopulator
-@JvmOverloads
-constructor(
-        override var name: String,
-        override var alias: String,
-        description: List<String> = emptyList()) : AbstractDescribable(description), MineRepopulator {
-
-    override val fullName: String
-        get() = "$name($alias)"
-}
+abstract class AbstractRepopulator(
+        name: String,
+        alias: String,
+        description: List<String>
+) : AbstractNameableDescribable(name, alias, description), MineRepopulator

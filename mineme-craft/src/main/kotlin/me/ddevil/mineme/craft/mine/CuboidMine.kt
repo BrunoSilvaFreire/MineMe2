@@ -1,16 +1,15 @@
-package me.ddevil.mineme.craft.mine.internal
+package me.ddevil.mineme.craft.mine
 
 import com.google.common.collect.ImmutableMap
 import com.sk89q.worldedit.Vector
 import com.sk89q.worldedit.regions.CuboidRegion
+import me.ddevil.mineme.api.composition.MineComposition
+import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.craft.api.hologram.HologramFormation
 import me.ddevil.mineme.craft.api.mine.MineRepopulator
 import me.ddevil.mineme.craft.api.mine.MineType
-import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.craft.config.MineMeConfigValue
-import me.ddevil.mineme.craft.mine.AbstractHologramMine
-import me.ddevil.mineme.api.composition.MineComposition
-import me.ddevil.shiroi.util.getOrException
+import me.ddevil.util.getOrException
 import org.bukkit.inventory.ItemStack
 
 class CuboidMine : AbstractHologramMine<CuboidRegion> {

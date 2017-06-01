@@ -1,10 +1,10 @@
 package me.ddevil.mineme.craft.api.mine
 
-import me.ddevil.mineme.craft.api.mine.executor.MineResetExecutor
 import me.ddevil.mineme.api.composition.MineComposition
-import me.ddevil.shiroi.util.misc.Nameable
+import me.ddevil.mineme.craft.api.mine.executor.MineResetExecutor
 import me.ddevil.shiroi.util.misc.Toggleable
-import me.ddevil.shiroi.util.serialization.Serializable
+import me.ddevil.util.Serializable
+import me.ddevil.util.misc.Nameable
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.block.Block

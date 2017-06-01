@@ -1,11 +1,11 @@
 package me.ddevil.mineme.craft.ui.composition
 
-import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.api.composition.MineComposition
-import me.ddevil.shiroi.craft.util.ItemBuilder
+import me.ddevil.mineme.craft.MineMe
+import me.ddevil.shiroi.craft.util.ShiroiItemBuilder
+import me.ddevil.shiroi.ui.api.component.misc.ClickableItemSlotComponent
 import me.ddevil.shiroi.ui.api.misc.Action
 import me.ddevil.shiroi.ui.api.updater.ItemUpdater
-import me.ddevil.shiroi.ui.internal.component.misc.ClickableItemSlotComponent
 import org.bukkit.inventory.ItemStack
 import java.text.DecimalFormat
 
@@ -23,10 +23,10 @@ constructor(
                 )
                 lore.add("")
                 lore.addAll(composition.description.map { "$3$it" })
-                return ItemBuilder(oldItem, plugin.messageManager)
+                return ShiroiItemBuilder(plugin.messageManager, oldItem)
                         .setName("$1${composition.name}$3($2${composition.alias})")
                         .setLore(lore)
-                        .toItemStack()
+                        .build()
             }
         }, plugin.uiManager.getBiggestMaterial(composition),
         id = null,

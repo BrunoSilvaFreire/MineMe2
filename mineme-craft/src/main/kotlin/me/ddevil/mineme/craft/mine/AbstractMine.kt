@@ -2,8 +2,9 @@ package me.ddevil.mineme.craft.mine
 
 import com.google.common.collect.ImmutableMap
 import com.sk89q.worldedit.regions.Region
-import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.api.MineMeConstants
+import me.ddevil.mineme.api.composition.MineComposition
+import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.craft.api.MineMeCraftConstants
 import me.ddevil.mineme.craft.api.mine.Mine
 import me.ddevil.mineme.craft.api.mine.MineRepopulator
@@ -15,8 +16,10 @@ import me.ddevil.mineme.craft.mine.misc.CountdownRunnable
 import me.ddevil.mineme.craft.mine.misc.WorldEditIterator
 import me.ddevil.mineme.craft.mine.repopulator.EmptyRepopulator
 import me.ddevil.mineme.craft.mine.repopulator.FillMineRepopulator
-import me.ddevil.mineme.api.composition.MineComposition
-import me.ddevil.shiroi.util.getOrException
+import me.ddevil.util.getInt
+import me.ddevil.util.getMap
+import me.ddevil.util.getMapAny
+import me.ddevil.util.getString
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
@@ -76,30 +79,30 @@ abstract class AbstractMine<R : Region> : Mine {
     constructor(plugin: MineMe, map: Map<String, Any>) {
         this.plugin = plugin
         //Misc
-        this.name = map.getOrException(MineMeConstants.MINE_NAME_IDENTIFIER)
-        this.alias = map.getOrException(MineMeConstants.MINE_ALIAS_IDENTIFIER)
-        this.icon = ItemStack.deserialize(map.getOrException(MineMeConstants.MINE_ICON_IDENTIFIER))
+        this.name = map.getString(MineMeConstants.MINE_NAME_IDENTIFIER)
+        this.alias = map.getString(MineMeConstants.MINE_ALIAS_IDENTIFIER)
+        this.icon = ItemStack.deserialize(map.getMap(MineMeConstants.MINE_ICON_IDENTIFIER))
 
         //Position
-        this.world = Bukkit.getWorld(map.getOrException<String>(MineMeConstants.MINE_WORLD_IDENTIFIER))
-        this.region = loadRegion(map.getOrException(MineMeConstants.MINE_REGION_IDENTIFIER))
+        this.world = Bukkit.getWorld(map.getString(MineMeConstants.MINE_WORLD_IDENTIFIER))
+        this.region = loadRegion(map.getMapAny(MineMeConstants.MINE_REGION_IDENTIFIER))
         //Composition
-        val compositionName = map.getOrException<String>(MineMeConstants.MINE_COMPOSITION_IDENTIFIER)
+        val compositionName = map.getString(MineMeConstants.MINE_COMPOSITION_IDENTIFIER)
         this.composition = plugin.mineManager.getComposition(compositionName) ?: throw IllegalStateException("Couldn't find required composition '$compositionName' for mine $name!")
 
         //Resets
-        val resetMap = map.getOrException<Map<String, Any>>(MineMeConstants.MINE_RESET_CONFIG_IDENTIFIER)
+        val resetMap = map.getMapAny(MineMeConstants.MINE_RESET_CONFIG_IDENTIFIER)
         //Repopulator
-        val repopulatorName = resetMap.getOrException<String>(MineMeConstants.MINE_REPOPULATOR_IDENTIFIER)
+        val repopulatorName = resetMap.getString(MineMeConstants.MINE_REPOPULATOR_IDENTIFIER)
         this.defaultRepopulator = plugin.mineManager.getRepopulator(repopulatorName) ?: throw IllegalStateException("Couldn't find required repopulator '$repopulatorName' for mine $name!")
         //Executor
-        val executorMap = resetMap.getOrException<Map<String, Any>>(MineMeConstants.MINE_EXECUTOR_CONFIG_IDENTIFIER)
-        val executorTypeName = executorMap.getOrException<String>(MineMeConstants.MINE_EXECUTOR_TYPE_IDENTIFIER)
-        val executorMetaMap = executorMap.getOrException<Map<String, Any>>(MineMeConstants.MINE_EXECUTOR_META_IDENTIFIER)
+        val executorMap = resetMap.getMapAny(MineMeConstants.MINE_EXECUTOR_CONFIG_IDENTIFIER)
+        val executorTypeName = executorMap.getString(MineMeConstants.MINE_EXECUTOR_TYPE_IDENTIFIER)
+        val executorMetaMap = executorMap.getMapAny(MineMeConstants.MINE_EXECUTOR_META_IDENTIFIER)
         this.defaultExecutor = MineResetExecutorType.getType(executorTypeName).create(this, executorMetaMap, plugin)
 
         //Cooldown
-        this.resetDelay = resetMap.getOrException(MineMeConstants.MINE_RESET_DELAY_IDENTIFIER)
+        this.resetDelay = resetMap.getInt(MineMeConstants.MINE_RESET_DELAY_IDENTIFIER)
         this.currentCountdown = resetDelay
         this.enabled = true
 

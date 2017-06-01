@@ -11,7 +11,6 @@ import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.craft.config.MineMeConfigValue
 import me.ddevil.mineme.api.composition.MineComposition
 import me.ddevil.shiroi.craft.log.DebugLevel
-import me.ddevil.shiroi.util.getOrException
 import me.ddevil.util.getBoolean
 import me.ddevil.util.getMapAny
 import me.ddevil.util.getString

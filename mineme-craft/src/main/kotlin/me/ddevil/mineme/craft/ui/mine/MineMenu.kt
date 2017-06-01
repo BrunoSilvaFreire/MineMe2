@@ -1,23 +1,23 @@
 package me.ddevil.mineme.craft.ui.mine
 
 import com.google.common.collect.ImmutableList
-import me.ddevil.mineme.craft.api.mine.Mine
+import me.ddevil.mineme.api.composition.MineComposition
 import me.ddevil.mineme.craft.MineMe
+import me.ddevil.mineme.craft.api.mine.Mine
 import me.ddevil.mineme.craft.config.MineMeConfigValue
 import me.ddevil.mineme.craft.ui.UIResources
 import me.ddevil.mineme.craft.util.toItemStack
-import me.ddevil.mineme.api.composition.MineComposition
-import me.ddevil.shiroi.craft.toBukkit
-import me.ddevil.shiroi.craft.util.ItemBuilder
+import me.ddevil.shiroi.craft.util.ShiroiItemBuilder
+import me.ddevil.shiroi.craft.util.toBukkit
 import me.ddevil.shiroi.ui.api.UIPosition
 import me.ddevil.shiroi.ui.api.component.Drawable
+import me.ddevil.shiroi.ui.api.component.container.ArrayContainer
 import me.ddevil.shiroi.ui.api.component.container.MenuSize
+import me.ddevil.shiroi.ui.api.component.misc.ClickableItemSlotComponent
+import me.ddevil.shiroi.ui.api.component.misc.value.ContainerValueModifier
+import me.ddevil.shiroi.ui.api.component.misc.value.OnValueModifiedListener
 import me.ddevil.shiroi.ui.api.event.UIClickEvent
 import me.ddevil.shiroi.ui.api.misc.Action
-import me.ddevil.shiroi.ui.internal.component.container.ArrayContainer
-import me.ddevil.shiroi.ui.internal.component.misc.ClickableItemSlotComponent
-import me.ddevil.shiroi.ui.internal.component.misc.value.ContainerValueModifier
-import me.ddevil.shiroi.ui.internal.component.misc.value.OnValueModifiedListener
 import me.ddevil.shiroi.ui.shiroi.ShiroiMenu
 import me.ddevil.shiroi.util.misc.item.Material
 import org.bukkit.inventory.ItemStack
@@ -37,7 +37,10 @@ constructor(plugin: MineMe, val mine: Mine)
         }
     }
 
-    private val mainButtonsContainer: ArrayContainer<Drawable> = ArrayContainer(Drawable::class.java, 4, 3, UIResources.SECONDARY_BACKGROUND)
+    private val mainButtonsContainer: ArrayContainer<Drawable> = ArrayContainer(Drawable::class.java,
+            4,
+            3,
+            UIResources.SECONDARY_BACKGROUND)
     private val compositionSelector: ContainerValueModifier<MineComposition>
 
     init {
@@ -93,7 +96,9 @@ constructor(plugin: MineMe, val mine: Mine)
         }
         val itemCreator = {
             comp: MineComposition, x: Int, y: Int ->
-            val filter = plugin.configManager.getValue(MineMeConfigValue.COMMON_MATERIALS).map { Material.matchMaterial(it) ?: throw IllegalStateException("Unknown material $it") }.toSet()
+            val filter = plugin.configManager.getValue(MineMeConfigValue.COMMON_MATERIALS).map {
+                Material.matchMaterial(it) ?: throw IllegalStateException("Unknown material $it")
+            }.toSet()
             comp.largestMaterial(filter).toItemStack()
         }
         val updater = {
@@ -111,10 +116,10 @@ constructor(plugin: MineMe, val mine: Mine)
             if (mine.composition == composition) {
                 lore.add("$5Currently selected!")
             }
-            ItemBuilder(composition.randomMaterial().material.toBukkit(), plugin.messageManager)
+            ShiroiItemBuilder(plugin.messageManager, composition.randomMaterial().material.toBukkit())
                     .setName("$1${composition.name} $3($2${composition.alias}$3)")
                     .setLore(lore.build())
-                    .toItemStack()
+                    .build()
         }
         val options = ContainerValueModifier.Options(listener, populators, itemCreator, updater)
         compositionSelector = ContainerValueModifier(7, 1, options, UIResources.SECONDARY_BACKGROUND)

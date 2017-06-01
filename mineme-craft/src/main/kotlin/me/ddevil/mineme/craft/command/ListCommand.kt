@@ -4,7 +4,7 @@ import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.craft.message.MineMeLang
 import me.ddevil.shiroi.craft.command.Command
 import me.ddevil.shiroi.craft.command.CommandArgs
-import me.ddevil.shiroi.craft.message.lang.MessageVariable
+import me.ddevil.shiroi.craft.misc.variable.MessageVariable
 
 class ListCommand(plugin: MineMe) : MineMeCommand(plugin) {
 

@@ -4,24 +4,22 @@ import me.ddevil.mineme.craft.api.hologram.Hologram
 import me.ddevil.mineme.craft.api.hologram.HologramFormation
 import me.ddevil.mineme.craft.api.hologram.HologramManager
 import me.ddevil.mineme.craft.api.mine.Mine
-import me.ddevil.shiroi.util.misc.internal.AbstractDescribable
+import me.ddevil.util.misc.AbstractNameableDescribable
 
-abstract class AbstractHologramFormation : AbstractDescribable, HologramFormation {
+abstract class AbstractHologramFormation : AbstractNameableDescribable, HologramFormation {
     val hologramManager: HologramManager?
-    final override var alias: String
-    final override var name: String
+
 
     @JvmOverloads
-    constructor(hologramManager: HologramManager?, name: String, alias: String, description: List<String> = emptyList()) : super(description) {
+    constructor(hologramManager: HologramManager?,
+                name: String,
+                alias: String,
+                description: List<String> = emptyList()) : super(name, alias, description) {
         this.hologramManager = hologramManager
-        this.alias = alias
-        this.name = name
     }
 
-    override val fullName: String
-        get() = "$name($alias)"
     final override fun createHolograms(mine: Mine): Set<Hologram> {
-        if(hologramManager==null){
+        if (hologramManager == null) {
             return emptySet()
         }
         return createHolograms0(mine)

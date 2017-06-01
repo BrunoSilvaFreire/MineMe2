@@ -1,27 +1,30 @@
 package me.ddevil.mineme.craft.ui.composition
 
-import me.ddevil.mineme.craft.api.util.toMineMaterial
-import me.ddevil.mineme.craft.MineMe
-import me.ddevil.mineme.craft.ui.UIResources
-import me.ddevil.mineme.craft.ui.mine.MineMenu
 import me.ddevil.mineme.api.composition.MineComposition
 import me.ddevil.mineme.api.composition.MineMaterial
+import me.ddevil.mineme.craft.MineMe
+import me.ddevil.mineme.craft.api.util.toMineMaterial
+import me.ddevil.mineme.craft.ui.UIResources
+import me.ddevil.mineme.craft.ui.mine.MineMenu
 import me.ddevil.shiroi.craft.message.MessageManager
-import me.ddevil.shiroi.craft.toBukkit
-import me.ddevil.shiroi.craft.util.ItemBuilder
+import me.ddevil.shiroi.craft.util.ShiroiItemBuilder
+import me.ddevil.shiroi.craft.util.toBukkit
 import me.ddevil.shiroi.ui.api.UIPosition
 import me.ddevil.shiroi.ui.api.component.container.MenuSize
+import me.ddevil.shiroi.ui.api.component.misc.ItemSlotComponent
+import me.ddevil.shiroi.ui.api.component.scrollable.UnderPanelScrollable
 import me.ddevil.shiroi.ui.api.event.UIClickEvent
 import me.ddevil.shiroi.ui.api.misc.Action
 import me.ddevil.shiroi.ui.api.updater.ItemUpdater
-import me.ddevil.shiroi.ui.internal.component.misc.ItemSlotComponent
-import me.ddevil.shiroi.ui.internal.component.scrollable.UnderPanelScrollable
 import me.ddevil.shiroi.ui.shiroi.ShiroiMenu
 import me.ddevil.shiroi.ui.shiroi.ShiroiScrollerUpdater
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-class CompositionMenu(plugin: MineMe, val composition: MineComposition) : ShiroiMenu<MineMe>(plugin, "$1${composition.alias}", MenuSize.SIX_ROWS, UIResources.PRIMARY_BACKGROUND) {
+class CompositionMenu(plugin: MineMe, val composition: MineComposition) : ShiroiMenu<MineMe>(plugin,
+        "$1${composition.alias}",
+        MenuSize.SIX_ROWS,
+        UIResources.PRIMARY_BACKGROUND) {
     private var materialDisplays: UnderPanelScrollable<MineMaterialDisplay>
 
     init {
@@ -40,11 +43,15 @@ class CompositionMenu(plugin: MineMe, val composition: MineComposition) : Shiroi
     }
 }
 
-class MineMaterialDisplay(val composition: MineComposition, val material: MineMaterial, val messageManager: MessageManager) : ItemSlotComponent(
+class MineMaterialDisplay(
+        val composition: MineComposition,
+        val material: MineMaterial,
+        val messageManager: MessageManager
+) : ItemSlotComponent(
         object : ItemUpdater {
             override fun update(oldItem: ItemStack): ItemStack {
-                return ItemBuilder(material.toBukkit(), messageManager)
+                return ShiroiItemBuilder(messageManager, material.toBukkit())
                         .setName(material.toColorizedString(MineMenu.DECIMAL_FORMAT))
-                        .toItemStack()
+                        .build()
             }
         }, material.toBukkit(), null)

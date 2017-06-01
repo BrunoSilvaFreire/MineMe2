@@ -3,8 +3,8 @@ allprojects {
     version '2.0.0-SNAPSHOT'
 }
 buildscript {
-    ext.kotlin_version = '1.1.1'
-    ext.shiroi_ver = '3.2.0-SNAPSHOT'
+    ext.kotlin_version = '1.1.2-3'
+    ext.shiroi_ver = '3.3.0-SNAPSHOT'
 
     repositories {
         mavenCentral()
@@ -20,7 +20,7 @@ buildscript {
 
 setup(rootProject)
 
-def setup(project) {
+def setup(Project project) {
     println "$project.name"
     if (project.childProjects.isEmpty()) {
         project.plugins.apply('java')

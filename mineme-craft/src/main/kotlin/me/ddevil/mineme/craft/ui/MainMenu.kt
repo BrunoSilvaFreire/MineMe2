@@ -5,9 +5,9 @@ import me.ddevil.mineme.craft.ui.composition.CompositionDisplay
 import me.ddevil.mineme.craft.ui.mine.MineDisplay
 import me.ddevil.shiroi.ui.api.UIPosition
 import me.ddevil.shiroi.ui.api.component.container.MenuSize
+import me.ddevil.shiroi.ui.api.component.scrollable.UnderPanelScrollable
 import me.ddevil.shiroi.ui.api.event.UIClickEvent
 import me.ddevil.shiroi.ui.api.misc.Action
-import me.ddevil.shiroi.ui.internal.component.scrollable.UnderPanelScrollable
 import me.ddevil.shiroi.ui.shiroi.ShiroiMenu
 import me.ddevil.shiroi.ui.shiroi.ShiroiScrollerUpdater
 import org.bukkit.Material
