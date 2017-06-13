@@ -43,7 +43,7 @@ class MineMaterial : Item, Comparable<MineMaterial> {
             }
         }
 
-        val EMPTY = MineMaterial(Material.AIR, 1.0)
+        val EMPTY = MineMaterial(Material.AIR, 100.0)
     }
 
     var percentage: Double

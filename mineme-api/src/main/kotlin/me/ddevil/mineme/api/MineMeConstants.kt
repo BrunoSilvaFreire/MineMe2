@@ -49,6 +49,10 @@ object MineMeConstants {
     const val MINE_TOTAL_RESET_TIME_IDENTIFIER = "totalResetTime"
     const val MINE_RESET_TIME_LEFT_IDENTIFIER = "resetTimeLeft"
     const val MINE_HOLOGRAM_UPDATER_IDENTIFIER = "hologramUpdater"
+    const val CENTER_KEY = "center"
+    const val RADIUS_KEY = "radius"
+    const val MAXIMUM_Y_KEY = "maxY"
+    const val MINIMUM_Y_KEY = "minY"
 
     const val MINE_CONFIG_OPTION_NAME_IDENTIFIER = "name"
     const val MINE_CONFIG_OPTION_META_IDENTIFIER = "meta"

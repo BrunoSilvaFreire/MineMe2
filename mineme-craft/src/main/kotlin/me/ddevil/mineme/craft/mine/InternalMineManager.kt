@@ -14,6 +14,9 @@ import me.ddevil.mineme.craft.mine.config.InvalidMineConfig
 import me.ddevil.mineme.craft.mine.config.MineConfig
 import me.ddevil.mineme.craft.mine.config.ValidMineConfig
 import me.ddevil.mineme.craft.mine.loader.CuboidLoader
+import me.ddevil.mineme.craft.mine.loader.CylindricalLoader
+import me.ddevil.mineme.craft.mine.loader.EllipsoidLoader
+import me.ddevil.mineme.craft.mine.loader.PolygonalLoader
 import me.ddevil.mineme.craft.mine.repopulator.EmptyRepopulator
 import me.ddevil.mineme.craft.mine.repopulator.NormalRepopulator
 import me.ddevil.shiroi.craft.log.DebugLevel
@@ -187,7 +190,10 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
 
     private fun createDefaultLoaders(): Array<MineLoader<*>> {
         return arrayOf(
-                CuboidLoader(plugin)
+                CuboidLoader(plugin),
+                CylindricalLoader(plugin),
+                EllipsoidLoader(plugin),
+                PolygonalLoader(plugin)
         )
     }
 
