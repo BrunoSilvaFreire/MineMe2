@@ -5,27 +5,34 @@ import com.sk89q.worldedit.regions.Region
 import me.ddevil.mineme.api.MineMeConstants
 import me.ddevil.mineme.api.composition.MineComposition
 import me.ddevil.mineme.craft.MineMe
-import me.ddevil.mineme.craft.api.MineMeCraftConstants
 import me.ddevil.mineme.craft.api.mine.*
 import me.ddevil.mineme.craft.api.mine.executor.MineResetExecutor
 import me.ddevil.mineme.craft.api.mine.executor.MineResetExecutorType
 import me.ddevil.mineme.craft.config.MineMeConfigValue
+import me.ddevil.mineme.craft.event.MineDisabledEvent
+import me.ddevil.mineme.craft.mine.config.InvalidMineConfig
+import me.ddevil.mineme.craft.mine.config.MineConfig
+import me.ddevil.mineme.craft.mine.config.ValidMineConfig
 import me.ddevil.mineme.craft.mine.loader.CuboidLoader
 import me.ddevil.mineme.craft.mine.repopulator.EmptyRepopulator
 import me.ddevil.mineme.craft.mine.repopulator.NormalRepopulator
 import me.ddevil.shiroi.craft.log.DebugLevel
-import me.ddevil.shiroi.craft.util.getOrException
 import me.ddevil.shiroi.craft.util.parseConfig
 import me.ddevil.shiroi.craft.util.set
 import me.ddevil.shiroi.craft.util.toMap
 import me.ddevil.util.Serializable
+import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
 import java.io.File
+import java.io.FileFilter
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 
 class InternalMineManager(val plugin: MineMe) : MineManager {
+
+
     override fun createDefaultResetExecutor(arg: Mine): MineResetExecutor {
         return defaultExecutor.create(arg, emptyMap(), plugin)
     }
@@ -69,35 +76,8 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
     override var defaultMineIcon: ItemStack by Delegates.notNull<ItemStack>()
         private set
 
-    override fun reload() {
-        for (mine in loadedMines) {
-            mine.disable()
-        }
-        loadedCompositions.clear()
-        loadedMines.clear()
-        loadCompositionsAndMines()
-    }
 
-    override fun enable() {
-        this.defaultMineIcon = parseConfig(plugin.configManager.getValue(MineMeConfigValue.DEFAULT_MINE_ICON), plugin.messageManager)
-        loadCompositionsAndMines()
-    }
-
-    override fun disable() {
-    }
-
-    private fun createDefaultRepopulators() = arrayOf(
-            NormalRepopulator.INSTANCE,
-            EmptyRepopulator.INSTANCE
-    )
-
-    private fun createDefaultLoaders(): Array<MineLoader<*>> {
-        return arrayOf(
-                CuboidLoader(plugin)
-        )
-    }
-
-    override fun get(name: String) = loadedMines.firstOrNull { it.name == name }
+    override fun getMine(name: String) = loadedMines.firstOrNull { it.name == name }
 
     override fun getComposition(name: String) = loadedCompositions.firstOrNull { it.name == name }
 
@@ -109,8 +89,106 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
                 ?.let { it as? MineLoader<R> }
     }
 
-    override fun getLoader(type: MineType): MineLoader<*>? {
-        return loaders.firstOrNull { it.supportedType == type }
+    override fun getLoader(type: MineType): MineLoader<*> {
+        return loaders.first { it.supportedType == type }
+    }
+
+    override fun reload() {
+        for (mine in loadedMines) {
+            mine.disable()
+        }
+        loadedCompositions.clear()
+        loadedMines.clear()
+        loadCompositionsAndMines()
+    }
+
+    override fun reload(sender: CommandSender) {
+        reload()
+        plugin.messageManager.sendMessage(sender,
+                "Loaded $1${loadedMines.size} $3mines and $1${compositions.size} $3compositions."
+        )
+
+    }
+
+    override fun enable() {
+        this.defaultMineIcon = parseConfig(plugin.configManager.getValue(MineMeConfigValue.DEFAULT_MINE_ICON),
+                plugin.messageManager)
+        loadCompositionsAndMines()
+    }
+
+    override fun disable() {
+    }
+
+    override fun disable(mine: Mine) {
+        plugin.pluginLogger.log("Disabling mine ${mine.name} ...")
+        loadedMines.remove(mine)
+        println(loadedMines)
+        println(mines)
+        save(mine)
+        MineDisabledEvent(mine).call()
+    }
+
+    override fun loadMine(validMineConfig: ValidMineConfig): Mine {
+        if (hasMine(validMineConfig.name)) {
+            throw IllegalArgumentException("The provided config already has a equivalent mine loaded!")
+        }
+        val mine = getLoader(validMineConfig.type).loadMine(validMineConfig.map)
+        registerMine(mine)
+        mine.counting = true
+        return mine
+    }
+
+    override fun hasMine(name: String) = getMine(name) != null
+
+    override fun hasComposition(name: String) = getComposition(name) != null
+
+    override fun save(mine: Mine) {
+        plugin.pluginLogger.log("Saving mine '${mine.name}' ...")
+        saveSerializable(mine, getMineFile(mine))
+    }
+
+    override fun save(mineComposition: MineComposition) {
+        plugin.pluginLogger.log("Saving composition '${mineComposition.name}'...")
+        saveSerializable(mineComposition, getMineCompositionFile(mineComposition))
+    }
+
+    override fun delete(mine: Mine) {
+        plugin.pluginLogger.log("Deleting mine ${mine.name} ...")
+        mine.disable()
+        loadedMines.remove(mine)
+        println(loadedMines)
+        println(mines)
+        getMineFile(mine).delete()
+    }
+
+    override fun findUnloadedMines(): List<MineConfig> {
+        val list = ArrayList<MineConfig>()
+        val foundFiles = minesFolder.listFiles(FileFilter {
+            return@FileFilter it.extension == MineMeConstants.DEFAULT_FILE_EXTENSION
+        })
+        for (file in foundFiles) {
+            try {
+                val config = ValidMineConfig(file)
+                if (hasMine(config.name)) {
+                    continue
+                }
+                list += config
+            } catch (exception: Exception) {
+                list += InvalidMineConfig(file)
+            }
+        }
+        return list
+    }
+
+    private fun createDefaultRepopulators() = arrayOf(
+            NormalRepopulator.INSTANCE,
+            EmptyRepopulator.INSTANCE
+    )
+
+    private fun createDefaultLoaders(): Array<MineLoader<*>> {
+        return arrayOf(
+                CuboidLoader(plugin)
+        )
     }
 
     override fun registerMine(mine: Mine) {
@@ -128,6 +206,23 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
         loadedCompositions.add(composition)
     }
 
+
+    private fun getMineCompositionFile(comp: MineComposition) = File(compositionsFolder,
+            "${comp.name}.${MineMeConstants.DEFAULT_FILE_EXTENSION}")
+
+    private fun getMineFile(mine: Mine) = File(minesFolder, "${mine.name}.${MineMeConstants.DEFAULT_FILE_EXTENSION}")
+
+    private fun saveSerializable(serializable: Serializable, file: File) {
+        plugin.chainFactory.newChain<Any>().asyncFirst<Any>(
+                TaskChainTasks.FirstTask<Any> {
+                    val config = YamlConfiguration()
+                    config.set(serializable.serialize())
+                    config.save(file)
+                    return@FirstTask null
+
+                }).execute()
+    }
+
     private fun loadCompositionsAndMines() {
         if (!minesFolder.exists()) {
             minesFolder.mkdirs()
@@ -143,26 +238,15 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
 
     private fun loadMinesFromFolder(): Set<Mine> {
         val loadedMines = mutableSetOf<Mine>()
-        plugin.pluginLogger.log("Loading mines...")
-        for (file in minesFolder.listFiles()) {
-            if (file.extension == MineMeConstants.DEFAULT_FILE_EXTENSION) {
-                try {
-                    val config = YamlConfiguration.loadConfiguration(file)
-                    if (config.getBoolean(MineMeConstants.MINE_ENABLED_IDENTIFIER)) {
-                        val mine = loadMine(config)
-                        loadedMines.add(mine)
-                        plugin.pluginLogger.log("Mine ${mine.name} loaded.")
-                        mine.enable()
-                    } else {
-                        plugin.pluginLogger.log("Mine file ${file.name} is disabled, skipping...")
-
-                    }
-                } catch (e: Exception) {
-                    plugin.pluginLogger.printException("There was a problem while loading mine file '${file.path}'! Skipping...", e)
-                    continue
-                }
+        for (mineConfig in findUnloadedMines().filterIsInstance<ValidMineConfig>()) {
+            if (mineConfig.enabled) {
+                val mine = loadMine(mineConfig)
+                loadedMines.add(mine)
+                plugin.pluginLogger.log("Mine ${mine.name} loaded.")
+                mine.enable()
             } else {
-                plugin.pluginLogger.log("Found invalid file (${file.path}) in mines folder, please remove...", DebugLevel.OKAY_SOME_REAL_SHIT_HAPPENED)
+                plugin.pluginLogger.log("Mine file ${mineConfig.file.name} is disabled, skipping...")
+
             }
         }
         plugin.pluginLogger.log("Found a total of ${loadedMines.size} mines...")
@@ -173,57 +257,18 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
         plugin.pluginLogger.log("Loading compositions...")
         val compositions = mutableSetOf<MineComposition>()
         for (file in compositionsFolder.listFiles()) {
-            if (file.extension == MineMeCraftConstants.DEFAULT_FILE_EXTENSION) {
+            if (file.extension == MineMeConstants.DEFAULT_FILE_EXTENSION) {
                 val config = YamlConfiguration.loadConfiguration(file)
                 val mine = MineComposition(config.toMap())
                 compositions.add(mine)
                 plugin.pluginLogger.log("Composition ${mine.name} loaded.")
             } else {
-                plugin.pluginLogger.log("Found invalid file (${file.path}) in composition folder, please remove...", DebugLevel.OKAY_SOME_REAL_SHIT_HAPPENED)
+                plugin.pluginLogger.log("Found invalid file (${file.path}) in composition folder, please remove...",
+                        DebugLevel.OKAY_SOME_REAL_SHIT_HAPPENED)
             }
         }
         plugin.pluginLogger.log("Found a total of ${compositions.size} compositions...")
         return compositions
     }
 
-    private fun loadMine(config: YamlConfiguration): Mine {
-        val type = MineType.valueOf(config.getOrException(MineMeConstants.MINE_TYPE_IDENTIFIER))
-        val loader = getLoader(type) ?: throw IllegalStateException("Unsupported mine type '${type.name}'!")
-        return loader.loadMine(config.toMap())
-    }
-
-    private fun getMineCompositionFile(mineComposition: MineComposition) = File(compositionsFolder, "${mineComposition.name}.${MineMeCraftConstants.DEFAULT_FILE_EXTENSION}")
-
-    private fun getMineFile(mine: Mine) = File(minesFolder, "${mine.name}.${MineMeCraftConstants.DEFAULT_FILE_EXTENSION}")
-
-
-    override fun save(mine: Mine) {
-        plugin.pluginLogger.log("Saving mine '${mine.name}' ...")
-        saveSerializable(mine, getMineFile(mine))
-    }
-
-    override fun save(mineComposition: MineComposition) {
-        plugin.pluginLogger.log("Saving composition '${mineComposition.name}'...")
-        saveSerializable(mineComposition, getMineCompositionFile(mineComposition))
-    }
-
-    private fun saveSerializable(serializable: Serializable, mineFile: File) {
-        plugin.chainFactory.newChain<Any>().asyncFirst<Any>(
-                TaskChainTasks.FirstTask<Any> {
-                    val config = YamlConfiguration()
-                    config.set(serializable.serialize())
-                    config.save(mineFile)
-                    return@FirstTask null
-
-                }).execute()
-    }
-
-    override fun delete(mine: Mine) {
-        plugin.pluginLogger.log("Deleting mine ${mine.name} ...")
-        mine.disable()
-        if (loadedMines.contains(mine)) {
-            loadedMines.remove(mine)
-        }
-        getMineFile(mine).delete()
-    }
 }

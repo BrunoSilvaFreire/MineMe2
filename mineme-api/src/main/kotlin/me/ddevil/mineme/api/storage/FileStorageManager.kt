@@ -50,7 +50,7 @@ class FileStorageManager : StorageManager {
 
     fun getCompositionFile(name: String) = File(
             compositionsFolder,
-            "$name${MineMeConstants.MINE_AND_COMPOSITION_FILE_EXTENSION}"
+            "$name${MineMeConstants.STORAGE_FILE_EXTENSION}"
     )
 
     override fun getMine(name: String): MineInfo? = loadedMines.getOrPut(name) {
@@ -64,6 +64,6 @@ class FileStorageManager : StorageManager {
 
     fun getMineFile(name: String) = File(
             minesFolder,
-            "$name${MineMeConstants.MINE_AND_COMPOSITION_FILE_EXTENSION}"
+            "$name${MineMeConstants.STORAGE_FILE_EXTENSION}"
     )
 }

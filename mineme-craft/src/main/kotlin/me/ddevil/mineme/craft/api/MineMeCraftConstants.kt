@@ -8,6 +8,6 @@ object MineMeCraftConstants {
     const val SECOND_TICK = 20L
 
     const val HOLOGRAPHIC_DISPLAYS_NAME = "HolographicDisplays"
-    const val DEFAULT_FILE_EXTENSION = "yml"
+    const val MINE_RESET_EXECUTOR_BLOCKS_PER_SECOND_KEY = "blocksPerSecond"
 
 }

@@ -1,21 +1,64 @@
 resources:
   primaryBackground:
-    type: 'IRON_FENCE'
+    type: IRON_FENCE
     name: '&r'
   secondaryBackground:
-    type: 'STAINED_GLASS_PANE'
+    type: STAINED_GLASS_PANE
     data: 15
     name: '&r'
   teleportButton:
-    type: 'ENDER_PEARL'
-    name: '$1Teleport to mine location!'
+    type: ENDER_PEARL
+    name: $1Teleport to validMine location!
     lore:
-      - '$3The spawn location will be'
-      - '$3the top-y-center of the mine :)'
+    - '$3The spawn location will be'
+    - '$3the top-y-center of the validMine :)'
   resetButton:
-    type: 'WOOD_PICKAXE'
+    type: WOOD_PICKAXE
     data: 0
-    name: '$1Reset mine'
+    name: '$1Reset validMine'
     lore:
-      - '$1Forces the mine to reset'
-      - '$1like... $4RIGHT NOW!'
+    - '$1Forces the validMine to reset'
+    - '$1like... $4RIGHT NOW!'
+  clearButton:
+    type: IRON_PICKAXE
+    name: '$2Clears the validMine!'
+  backButton:
+    type: EMERALD
+    name: '$5Back'
+  closeButton:
+    type: BARRIER
+    name: '$4Close'
+  deleteButton:
+    type: TNT
+    name: '$4Delete Mine'
+    lore:
+    - '$4This deletes the validMine permanently.'
+    - '$4This is not reversible.'
+  pauseCountdown:
+    type: INK_SACK
+    data: 1
+    name: $4Pause Mine Countdown
+    lore:
+    - '$3This pauses the validMine''s reset countdown.'
+    - '$3The countdown can be resumed again by'
+    - '$3pressing this button again.'
+  resumeCountdown:
+    type: INK_SACK
+    data: 10
+    name: $5Resume Mine Countdown
+    lore:
+    - '$3This resumes the validMine's reset countdown.'
+    - '$3The countdown can be again by'
+    - '$3pressing this button again.'
+  disableButton:
+    type: REDSTONE_TORCH_ON
+    name: $4Disable Mine
+    lore:
+    - '$4This unloads the validMine and prevents'
+    - '$4it from being loaded in the next start-ups.'
+    - '$4The validMine can be re-enabled through it's config'
+  changeComposition:
+    type: DIAMOND_BLOCK
+    name: $1Change Composition
+    lore:
+    - $3Opens a menu to change this validMine's composition

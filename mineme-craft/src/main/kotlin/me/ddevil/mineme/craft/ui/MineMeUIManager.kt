@@ -1,20 +1,21 @@
 package me.ddevil.mineme.craft.ui
 
-import me.ddevil.mineme.craft.api.mine.Mine
+import me.ddevil.mineme.api.composition.MineComposition
+import me.ddevil.mineme.api.composition.MineMaterial
 import me.ddevil.mineme.craft.MineMe
+import me.ddevil.mineme.craft.api.mine.Mine
 import me.ddevil.mineme.craft.config.MineMeConfigValue
 import me.ddevil.mineme.craft.ui.composition.CompositionMenu
 import me.ddevil.mineme.craft.ui.mine.MineMenu
-import me.ddevil.mineme.api.composition.MineComposition
-import me.ddevil.mineme.api.composition.MineMaterial
-import me.ddevil.shiroi.util.misc.Reloadable
+import me.ddevil.shiroi.craft.misc.CraftReloadable
 import me.ddevil.shiroi.util.misc.Toggleable
 import org.bukkit.Material
+import org.bukkit.command.CommandSender
 import org.bukkit.inventory.ItemStack
 import java.util.*
 import kotlin.properties.Delegates
 
-class MineMeUIManager(val plugin: MineMe) : Toggleable, Reloadable {
+class MineMeUIManager(val plugin: MineMe) : Toggleable, CraftReloadable {
     var mainMenu: MainMenu by Delegates.notNull<MainMenu>()
         private set
     private var mineMenuCache: MutableMap<Mine, MineMenu> = HashMap()
@@ -26,17 +27,23 @@ class MineMeUIManager(val plugin: MineMe) : Toggleable, Reloadable {
         return@getOrPut menu
     }
 
-    fun getCompositionMenu(composition: MineComposition) = compositionMenuCache.getOrPut(composition){
+    fun getCompositionMenu(composition: MineComposition) = compositionMenuCache.getOrPut(composition) {
         val menu = CompositionMenu(plugin, composition)
         menu.register()
         return@getOrPut menu
     }
+
     override fun disable() {
 
     }
 
     override fun reload() {
         loadItems()
+    }
+
+    override fun reload(sender: CommandSender) {
+        loadItems()
+        plugin.messageManager.sendMessage(sender, "UI reloaded")
     }
 
     override fun enable() {
@@ -46,7 +53,7 @@ class MineMeUIManager(val plugin: MineMe) : Toggleable, Reloadable {
 
     private fun loadItems() {
         UIResources.loadItems(plugin.configManager, plugin.messageManager)
-        mainMenu = MainMenu(plugin, plugin.configManager.getValue(MineMeConfigValue.PLUGIN_PREFIX))
+        mainMenu = MainMenu(plugin)
         mainMenu.register()
     }
 
@@ -55,10 +62,11 @@ class MineMeUIManager(val plugin: MineMe) : Toggleable, Reloadable {
             return ItemStack(Material.STONE)
         }
         val map = composition.compositionMap
-        val commonMaterials = plugin.configManager.getValue(MineMeConfigValue.COMMON_MATERIALS).map { Material.getMaterial(it) }
+        val commonMaterials = plugin.configManager.getValue(MineMeConfigValue.COMMON_MATERIALS).map {
+            Material.getMaterial(it)
+        }
         val possibleMaterials = map.filter { !commonMaterials.contains(Material.getMaterial(it.material.name)) }
         val highest: MineMaterial = possibleMaterials.max() ?: map.first()
         return ItemStack(highest.material.id, 1, highest.data.toShort())
     }
-
 }

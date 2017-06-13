@@ -1,0 +1,48 @@
+command:
+  list:
+    validMine:
+      empty: $4There are no mines loaded!
+      header: '$3Found mines:'
+      found: $1{name} $3($2{alias}$3, &d{type}) $3@ $1{world}
+    compositions:
+      header: '$3Found compositions:'
+      found: $1{name} $3($2{alias}$3, isEmpty=&d{empty}$3)
+  creation:
+    composition:
+      nameRequired: $4You need to provide a name for the composition!
+      aliasRequired: $4You need to provide an alias for the composition!
+      success: $3Composition $5{name} $3successfully created!
+    validMine:
+      worldEdit:
+        selectionRequired: $4You need to have a world edit selection!
+      nameRequired: $4You need to provide a name for the validMine!
+      aliasRequired: $4You need to provide an alias for the validMine!
+      compositionRequired: $4You need to provide a composition for the validMine!
+      success: $3Mine $5{name} $3successfully created! (&d{type}$3)
+  reset:
+    nameRequired: $4You must provide a validMine!
+    notFound: $4Couldn't find a validMine with name $1{name}$4!
+    resetAllMines: $5Successfully $3reset validMine $1{alias} $3($2{name}$3)!
+    resetMine: $5Successfully reset validMine $1{alias} $3($2{name}$3)!
+  clear:
+    clearedMine: The validMine $1{name} $3has been successfully cleared!
+    clearedAllMines: $5Successfully cleared all mines!
+    nameRequired: $4You must provide a validMine!
+  info:
+  - 'name: $1{name}'
+  - 'alias: $1{alias}'
+  - 'world: $1{world}'
+  - 'type: &d{type}'
+  - 'composition: $1{composition}'
+  - 'minedBlocks: $1{minedBlocks}'
+  - 'volume: $1{volume}'
+  - 'mineBlocksPercent: $1{mineBlocksPercent}'
+  - 'resetTimePassed: $1{resetTimePassed}'
+  - 'totalResetTime: $1{totalResetTime}'
+  - 'resetTimeLeft: $1{resetTimeLeft}'
+validMine:
+  disabled: Mine $1{name} $3was $5successfully disabled$3!
+  deleted: Mine $1{name} $3was $5successfully deleted$3!
+ui:
+  validMine:
+    compositionSelectorTitle: $3Select a composition for validMine $1{name}$3.

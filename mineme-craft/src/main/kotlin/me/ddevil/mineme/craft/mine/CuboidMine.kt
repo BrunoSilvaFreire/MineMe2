@@ -5,7 +5,7 @@ import com.sk89q.worldedit.Vector
 import com.sk89q.worldedit.regions.CuboidRegion
 import me.ddevil.mineme.api.composition.MineComposition
 import me.ddevil.mineme.craft.MineMe
-import me.ddevil.mineme.craft.api.hologram.HologramFormation
+import me.ddevil.mineme.craft.api.hologram.formation.HologramFormation
 import me.ddevil.mineme.craft.api.mine.MineRepopulator
 import me.ddevil.mineme.craft.api.mine.MineType
 import me.ddevil.mineme.craft.config.MineMeConfigValue
@@ -13,6 +13,22 @@ import me.ddevil.util.getOrException
 import org.bukkit.inventory.ItemStack
 
 class CuboidMine : AbstractHologramMine<CuboidRegion> {
+    constructor(plugin: MineMe,
+                alias: String,
+                name: String,
+                composition: MineComposition,
+                region: CuboidRegion,
+                icon: ItemStack = plugin.mineManager.defaultMineIcon,
+                defaultRepopulator: MineRepopulator = plugin.mineManager.defaultRepopulator,
+                resetDelay: Int = plugin.configManager.getValue(MineMeConfigValue.DEFAULT_MINE_RESET_DELAY),
+                formation: HologramFormation? = null,
+                useCustomHologramText: Boolean = false,
+                customHologramText: List<String> = emptyList()
+    ) : super(plugin, alias, name, composition, region, icon, defaultRepopulator, resetDelay, formation,
+            useCustomHologramText, customHologramText)
+
+    constructor(plugin: MineMe, map: Map<String, Any>) : super(plugin, map)
+
     override fun loadRegion(map: Map<String, Any>): CuboidRegion {
         val x1 = map.getOrException<Int>("x1")
         val y1 = map.getOrException<Int>("y1")
@@ -22,19 +38,6 @@ class CuboidMine : AbstractHologramMine<CuboidRegion> {
         val z2 = map.getOrException<Int>("z2")
         return CuboidRegion(Vector(x1, y1, z1), Vector(x2, y2, z2))
     }
-
-    constructor(plugin: MineMe,
-                alias: String,
-                name: String,
-                composition: MineComposition,
-                region: CuboidRegion,
-                icon: ItemStack = plugin.mineManager.defaultMineIcon,
-                formation: HologramFormation? = null,
-                defaultRepopulator: MineRepopulator = plugin.mineManager.defaultRepopulator,
-                resetDelay: Int = plugin.configManager.getValue(MineMeConfigValue.DEFAULT_MINE_RESET_DELAY)
-    ) : super(plugin, alias, name, composition, region, icon, defaultRepopulator, formation, resetDelay)
-
-    constructor(plugin: MineMe, map: Map<String, Any>) : super(plugin, map)
 
     override val type: MineType
         get() = MineType.CUBOID

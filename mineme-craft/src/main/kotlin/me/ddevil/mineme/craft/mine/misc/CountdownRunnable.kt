@@ -11,6 +11,9 @@ class CountdownRunnable(val mine: Mine) : BukkitRunnable() {
         } else {
             mine.currentCountdown--
         }
+        for (listener in mine.clockListeners) {
+            listener.function()
+        }
     }
 
 }

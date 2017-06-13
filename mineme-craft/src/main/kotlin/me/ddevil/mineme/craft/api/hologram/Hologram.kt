@@ -9,4 +9,6 @@ interface Hologram {
     var visible: Boolean
 
     fun delete()
+
+    fun setLines(hologramText: List<String>)
 }

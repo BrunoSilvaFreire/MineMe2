@@ -19,12 +19,12 @@ constructor(
             override fun update(oldItem: ItemStack): ItemStack {
                 val lore = ArrayList<String>(
                         composition.compositionMap
-                                .map { "$1${it.material}$3:$1${it.data}$3=$2${FORMAT.format(it.percentage * 100)}" }
+                                .map { "$1${it.material}$3:$1${it.data}$3=$2${FORMAT.format(it.percentage)}" }
                 )
                 lore.add("")
                 lore.addAll(composition.description.map { "$3$it" })
                 return ShiroiItemBuilder(plugin.messageManager, oldItem)
-                        .setName("$1${composition.name}$3($2${composition.alias})")
+                        .setName("$1${composition.alias}$3($2${composition.name}$3)")
                         .setLore(lore)
                         .build()
             }

@@ -8,9 +8,10 @@ import me.ddevil.util.misc.Nameable
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.block.Block
+import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 
-interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable {
+interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable, Listener {
     //<editor-fold desc="General" defaultstate="collapsed">
     var icon: ItemStack
 
@@ -23,26 +24,26 @@ interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable {
     val world: World
 
     /**
-     * Resets the mine
+     * Resets the validMine
      */
     fun reset()
 
     /**
-     * Resets the mine with the given [repopulator]
+     * Resets the validMine with the given [repopulator]
 
      * @param repopulator
      */
     fun reset(repopulator: MineRepopulator)
 
     /**
-     * Resets the mine with the given [repopulator] and [executor]
+     * Resets the validMine with the given [repopulator] and [executor]
 
      * @param repopulator
      */
     fun reset(repopulator: MineRepopulator, executor: MineResetExecutor)
 
     /**
-     * Resets the mine with the given [executor]
+     * Resets the validMine with the given [executor]
      * @param executor
      */
     fun reset(executor: MineResetExecutor)
@@ -53,10 +54,16 @@ interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable {
     fun fill(item: ItemStack)
 
     /**
-     * Will remove all the blocks (not material) inside this mine, if
+     * Will remove all the blocks (not material) inside this validMine, if
      * you wish to remove the material, use [.clearMaterials] instead!
      */
     fun clear()
+
+    val minedBlocks: Int
+
+    val minedBlocksPercentage: Double
+
+    val volume: Int
 
     var resetDelay: Int
 
@@ -68,13 +75,24 @@ interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable {
 
     var defaultExecutor: MineResetExecutor
 
-    var enabled: Boolean
+    val enabled: Boolean
 
     fun delete()
 
     val center: Location
     val topCenter: Location
+
+    val clockListeners: List<MineClockListener>
+
+    fun addClockListener(function: () -> Unit): MineClockListener
+
+    fun addClockListener(listener: MineClockListener)
+
+    fun removeClockListener(listener: MineClockListener)
+
+
     //</editor-fold>
 
+    fun save()
 }
 

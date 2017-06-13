@@ -8,7 +8,7 @@ class FillMineRepopulator constructor(val itemStack: ItemStack) : AbstractRepopu
         "Fill",
         listOf(
                 "This repopulator fills the hole",
-                "mine with a single item."
+                "validMine with a single item."
         )
 ) {
     override fun getBlock(mine: Mine, x: Int, y: Int, z: Int) = Pair(itemStack.type, itemStack.durability.toByte())

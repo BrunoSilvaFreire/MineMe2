@@ -1,10 +1,13 @@
 package me.ddevil.mineme.craft.api.mine.executor
 
 import com.google.common.collect.ImmutableMap
-import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.api.MineMeConstants
+import me.ddevil.mineme.craft.MineMe
+import me.ddevil.mineme.craft.api.MineMeCraftConstants
 import me.ddevil.mineme.craft.api.mine.Mine
 import me.ddevil.mineme.craft.api.mine.MineRepopulator
+import me.ddevil.util.immutableMap
+import me.ddevil.util.set
 import org.bukkit.block.Block
 import org.bukkit.scheduler.BukkitRunnable
 
@@ -23,40 +26,30 @@ abstract class AbstractMineResetExecutor(override val mine: Mine) : MineResetExe
     abstract fun serializeMeta(): Map<String, Any>
 }
 
-class AsyncMineResetExecutor(mine: Mine, blocksPerSeconds: Int, private var plugin: MineMe) : AbstractMineResetExecutor(mine) {
-    companion object {
-        val BLOCKS_PER_SECOND_IDENTIFIER = "blocksPerSecond"
+class AsyncMineResetExecutor(mine: Mine,
+                             private var blocksPerSeconds: Int,
+                             private var plugin: MineMe) : AbstractMineResetExecutor(
+        mine) {
+
+    override fun serializeMeta(): Map<String, Any> = immutableMap {
+        this[MineMeCraftConstants.MINE_RESET_EXECUTOR_BLOCKS_PER_SECOND_KEY] = blocksPerSeconds
     }
 
-    override fun serializeMeta(): Map<String, Any> = ImmutableMap.builder<String, Any>()
-            .put(BLOCKS_PER_SECOND_IDENTIFIER, blocksPerSeconds)
-            .build()
-
-    private var timerDelay: Long
-    private var blocksPerRun: Long
-    private var _blocksPerSeconds: Int
-    private var blocksPerSeconds: Int
-        set(value) {
-            _blocksPerSeconds = value
-            if (blocksPerSeconds <= 20) {
-                timerDelay = 20 / blocksPerSeconds.toLong()
-                blocksPerRun = 1
-            } else {
-                timerDelay = 0
-                blocksPerRun = blocksPerSeconds.toLong() / 20
-            }
-        }
-        get() = _blocksPerSeconds
     override val type get() = MineResetExecutorType.ASYNC
 
-    init {
-        this._blocksPerSeconds = blocksPerSeconds
-        if (blocksPerSeconds <= 20) {
-            timerDelay = 20 / blocksPerSeconds.toLong()
-            blocksPerRun = 1
+    private val blocksPerRun: Long get() {
+        return if (blocksPerSeconds > 20) {
+            (blocksPerSeconds / 20).toLong()
         } else {
-            timerDelay = 0
-            blocksPerRun = blocksPerSeconds.toLong() / 20
+            1
+        }
+    }
+
+    private val timerDelay: Long get() {
+        return if (blocksPerSeconds >= 20) {
+            1
+        } else {
+            (20 / blocksPerSeconds).toLong()
         }
     }
 

@@ -1,29 +1,22 @@
 package me.ddevil.mineme.craft.hologram.formation
 
-import me.ddevil.mineme.craft.api.hologram.Hologram
-import me.ddevil.mineme.craft.api.hologram.HologramFormation
+import me.ddevil.mineme.api.MineMeConstants
 import me.ddevil.mineme.craft.api.hologram.HologramManager
-import me.ddevil.mineme.craft.api.mine.Mine
+import me.ddevil.mineme.craft.api.hologram.formation.HologramFormation
+import me.ddevil.util.immutableMap
 import me.ddevil.util.misc.AbstractNameableDescribable
+import me.ddevil.util.set
 
-abstract class AbstractHologramFormation : AbstractNameableDescribable, HologramFormation {
-    val hologramManager: HologramManager?
-
-
-    @JvmOverloads
-    constructor(hologramManager: HologramManager?,
-                name: String,
-                alias: String,
-                description: List<String> = emptyList()) : super(name, alias, description) {
-        this.hologramManager = hologramManager
+abstract class AbstractHologramFormation
+@JvmOverloads
+constructor(
+        val hologramManager: HologramManager,
+        name: String,
+        alias: String,
+        description: List<String> = emptyList()
+) : AbstractNameableDescribable(name, alias, description), HologramFormation{
+    override fun serialize(): Map<String, Any> = immutableMap {
+        this[MineMeConstants.MINE_CONFIG_OPTION_NAME_IDENTIFIER] = name
+        this[MineMeConstants.MINE_CONFIG_OPTION_META_IDENTIFIER] = meta
     }
-
-    final override fun createHolograms(mine: Mine): Set<Hologram> {
-        if (hologramManager == null) {
-            return emptySet()
-        }
-        return createHolograms0(mine)
-    }
-
-    abstract fun createHolograms0(mine: Mine): Set<Hologram>
 }

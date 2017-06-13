@@ -59,10 +59,38 @@ class MineMeConfigValue<out T : Any>(
                 MineMeConfigSource.MAIN,
                 "mines.defaults.icon"
         )
-        val  DEFAULT_MINE_RESET_EXECUTOR= MineMeConfigValue(
+        val DEFAULT_MINE_RESET_EXECUTOR = MineMeConfigValue(
                 MineResetExecutorType.SYNC.name,
                 MineMeConfigSource.MAIN,
                 "mines.defaults.reset.executor.type"
+        )
+        val DEFAULT_MINE_HOLOGRAM_TEXT = MineMeConfigValue(
+                listOf(
+                        "$1&lMine$2&lMe $4&l&o2",
+                        "$1{alias}",
+                        "$1{minedBlocks}&8/&7{totalBlocks} ($1{mineBlocksPercent}&7)",
+                        "$2{resetTimePassed}&8/&7{totalResetTime} ($2{resetTimeLeft}&7)",
+                        "$1&lMine$2&lMe $4&l&o2"
+                ),
+                MineMeConfigSource.MAIN,
+                "mines.holograms.defaultText"
+        )
+        val COMMAND_MINE_INFO = MineMeConfigValue(
+                listOf(
+                        "name: $1{name}",
+                        "alias: $1{alias}",
+                        "world: $1{world}",
+                        "type: &d{type}",
+                        "composition: $1{composition}",
+                        "minedBlocks: $1{minedBlocks}",
+                        "volume: $1{volume}",
+                        "mineBlocksPercent: $1{mineBlocksPercent}",
+                        "resetTimePassed: $1{resetTimePassed}",
+                        "totalResetTime: $1{totalResetTime}",
+                        "resetTimeLeft: $1{resetTimeLeft}"
+                ),
+                MineMeConfigSource.MESSAGES,
+                "command.info"
         )
     }
 }

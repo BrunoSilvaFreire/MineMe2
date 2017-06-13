@@ -1,27 +1,23 @@
 package me.ddevil.mineme.craft.ui.mine
 
-import com.google.common.collect.ImmutableList
-import me.ddevil.mineme.api.composition.MineComposition
 import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.craft.api.mine.Mine
-import me.ddevil.mineme.craft.config.MineMeConfigValue
+import me.ddevil.mineme.craft.message.MineMeLang
 import me.ddevil.mineme.craft.ui.UIResources
-import me.ddevil.mineme.craft.util.toItemStack
-import me.ddevil.shiroi.craft.util.ShiroiItemBuilder
-import me.ddevil.shiroi.craft.util.toBukkit
+import me.ddevil.mineme.craft.util.exportMessageVariables
 import me.ddevil.shiroi.ui.api.UIPosition
+import me.ddevil.shiroi.ui.api.component.BackButton
+import me.ddevil.shiroi.ui.api.component.CloseButton
 import me.ddevil.shiroi.ui.api.component.Drawable
 import me.ddevil.shiroi.ui.api.component.container.ArrayContainer
 import me.ddevil.shiroi.ui.api.component.container.MenuSize
 import me.ddevil.shiroi.ui.api.component.misc.ClickableItemSlotComponent
-import me.ddevil.shiroi.ui.api.component.misc.value.ContainerValueModifier
-import me.ddevil.shiroi.ui.api.component.misc.value.OnValueModifiedListener
+import me.ddevil.shiroi.ui.api.component.misc.value.BooleanValueModifier
+import me.ddevil.shiroi.ui.api.component.misc.value.ValueModifierUpdater
 import me.ddevil.shiroi.ui.api.event.UIClickEvent
 import me.ddevil.shiroi.ui.api.misc.Action
 import me.ddevil.shiroi.ui.shiroi.ShiroiMenu
-import me.ddevil.shiroi.util.misc.item.Material
 import org.bukkit.inventory.ItemStack
-import java.text.DecimalFormat
 
 class MineMenu
 constructor(plugin: MineMe, val mine: Mine)
@@ -29,21 +25,15 @@ constructor(plugin: MineMe, val mine: Mine)
         plugin.messageManager.translateAll("$1${mine.name}$3($2${mine.alias}$3)"),
         MenuSize.SIX_ROWS,
         UIResources.PRIMARY_BACKGROUND) {
-    companion object {
-        val DECIMAL_FORMAT = DecimalFormat(",###.##")
-        @JvmStatic
-        fun main(args: Array<String>) {
-            println(DECIMAL_FORMAT.format(35.1230))
-        }
-    }
+    val compositionSelectorMenu = CompositionSelectorMenu(plugin, this)
 
     private val mainButtonsContainer: ArrayContainer<Drawable> = ArrayContainer(Drawable::class.java,
-            4,
-            3,
+            9,
+            5,
             UIResources.SECONDARY_BACKGROUND)
-    private val compositionSelector: ContainerValueModifier<MineComposition>
 
     init {
+        compositionSelectorMenu.register()
         //Teleportation button
         mainButtonsContainer.place(ClickableItemSlotComponent(UIResources.TELEPORT_BUTTON, null,
                 object : Action {
@@ -59,6 +49,12 @@ constructor(plugin: MineMe, val mine: Mine)
                 object : Action {
                     override fun invoke(e: UIClickEvent, localPosition: UIPosition) {
                         mine.reset()
+                        plugin.messageManager.sendMessage(
+                                e.player,
+                                MineMeLang.COMMAND_RESET_MINE_SUCCESS,
+                                *mine.exportMessageVariables()
+
+                        )
                     }
                 }
         ), 1, 0)
@@ -67,62 +63,71 @@ constructor(plugin: MineMe, val mine: Mine)
                 object : Action {
                     override fun invoke(e: UIClickEvent, localPosition: UIPosition) {
                         mine.clear()
+                        plugin.messageManager.sendMessage(
+                                e.player,
+                                MineMeLang.COMMAND_CLEAR_MINE_SUCCESS,
+                                *mine.exportMessageVariables()
+
+                        )
                     }
                 }
         ), 2, 0)
+        //Disable button
+        mainButtonsContainer.place(ClickableItemSlotComponent(UIResources.DISABLE_BUTTON, null,
+                object : Action {
+                    override fun invoke(e: UIClickEvent, localPosition: UIPosition) {
+                        mine.disable()
+                        val player = e.player
+                        player.closeInventory()
+                        plugin.messageManager.sendMessage(player,
+                                MineMeLang.MINE_DISABLED,
+                                *mine.exportMessageVariables())
+
+                    }
+                }
+        ), 0, 1)
+        //Delete button
+        mainButtonsContainer.place(ClickableItemSlotComponent(UIResources.DELETE_BUTTON, null,
+                object : Action {
+                    override fun invoke(e: UIClickEvent, localPosition: UIPosition) {
+                        mine.delete()
+                        val player = e.player
+                        player.closeInventory()
+                        plugin.messageManager.sendMessage(player,
+                                MineMeLang.MINE_DELETED,
+                                *mine.exportMessageVariables())
+                    }
+                }
+        ), 1, 1)
+        //Resume/Pause Button
+        mainButtonsContainer.place(createBooleanModifier(), 0, 2)
+        mainButtonsContainer.place(ClickableItemSlotComponent(UIResources.CHANGE_COMPOSITION_BUTTON, null,
+                object : Action {
+                    override fun invoke(p1: UIClickEvent, p2: UIPosition) = compositionSelectorMenu.open(p1.player)
+                }
+        ), 2, 2)
         place(mainButtonsContainer, 0, 0)
-        val listener = object : OnValueModifiedListener<MineComposition> {
-            override fun onModified(modificationValue: MineComposition, e: UIClickEvent, localPosition: UIPosition) {
-                if (mine.composition == modificationValue) {
-                    return
-                }
-                mine.composition = modificationValue
-                if (e.isRightClick) {
-                    mine.reset()
-                }
-            }
-        }
-        val populators = object : ContainerValueModifier.Populator<MineComposition> {
-            private val iterator: Iterator<MineComposition> = plugin.mineManager.compositions.iterator()
-
-            override fun get(x: Int, y: Int): MineComposition? {
-                return if (iterator.hasNext()) {
-                    iterator.next()
-                } else {
-                    null
-                }
-            }
-
-        }
-        val itemCreator = {
-            comp: MineComposition, x: Int, y: Int ->
-            val filter = plugin.configManager.getValue(MineMeConfigValue.COMMON_MATERIALS).map {
-                Material.matchMaterial(it) ?: throw IllegalStateException("Unknown material $it")
-            }.toSet()
-            comp.largestMaterial(filter).toItemStack()
-        }
-        val updater = {
-            composition: MineComposition, x: Int, y: Int, i: ItemStack ->
-            val lore = ImmutableList.builder<String>()
-                    .addAll(
-                            composition.compositionMap.map {
-                                return@map it.toColorizedString(DECIMAL_FORMAT)
-                            }.toList())
-                    .add("$2Left Click $3simply changes")
-                    .add("$3 the selected composition")
-                    .add("")
-                    .add("$2Right Click $3changes the")
-                    .add("$3composition and resets the mine")
-            if (mine.composition == composition) {
-                lore.add("$5Currently selected!")
-            }
-            ShiroiItemBuilder(plugin.messageManager, composition.randomMaterial().material.toBukkit())
-                    .setName("$1${composition.name} $3($2${composition.alias}$3)")
-                    .setLore(lore.build())
-                    .build()
-        }
-        val options = ContainerValueModifier.Options(listener, populators, itemCreator, updater)
-        compositionSelector = ContainerValueModifier(7, 1, options, UIResources.SECONDARY_BACKGROUND)
-        place(compositionSelector, 1, 4)
+        place(BackButton(UIResources.BACK_BUTTON, plugin.uiManager.mainMenu), 0, 5)
+        place(CloseButton(UIResources.CLOSE_BUTTON), 8, 5)
     }
+
+    private fun createBooleanModifier() = BooleanValueModifier(
+            { return@BooleanValueModifier mine.counting },
+            {
+                mine.counting = it
+                this@MineMenu.update()
+            },
+            countdownItem, createUpdater()
+    )
+
+    private val countdownItem get() = if (mine.counting) {
+        UIResources.PAUSE_COUNTDOWN_BUTTON
+    } else {
+        UIResources.RESUME_COUNTDOWN_BUTTON
+    }
+
+    private fun createUpdater() = object : ValueModifierUpdater<Boolean> {
+        override fun update(oldItem: ItemStack, selectedValue: Boolean) = countdownItem
+    }
+
 }

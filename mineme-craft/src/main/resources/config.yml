@@ -5,23 +5,29 @@ plugin:
     neutralColor: GRAY
     warningColor: RED
     successColor: GREEN
+  messageSeparator: ' &6&l> $3'
+  prefix: $1&lMine$2&lMe
   holograms:
-    enabled: false
+    enabled: true
     provider: HOLOGRAPHIC_DISPLAYS
 mines:
-  composition:
-    commonMaterials:
-      - STONE
-      - COBBLESTONE
-      - SANDSTONE
-      - NETHERRACK
   defaults:
-     reset:
-       executor:
-         type: SYNC
-         async:
-           tickDelay: 1
-    repopulator: 'normal'
+    reset:
+      executor:
+        type: SYNC
     icon:
       type: REDSTONE_BLOCK
-    resetDelay: 300
+    resetDelay: 10
+  composition:
+    commonMaterials:
+    - STONE
+    - COBBLESTONE
+    - SANDSTONE
+    - NETHERRACK
+  holograms:
+    defaultText:
+    - $1&lMine$2&lMe $4&l&o2
+    - $1{alias}
+    - $1{minedBlocks}&8/&7{volume} ($1{mineBlocksPercent}&7)
+    - $2{resetTimePassed}&8/&7{totalResetTime} ($2{resetTimeLeft}&7)
+    - $1&lMine$2&lMe $4&l&o2

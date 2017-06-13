@@ -7,6 +7,7 @@ import me.ddevil.mineme.craft.message.MineMeLang
 import me.ddevil.shiroi.craft.command.Command
 import me.ddevil.shiroi.craft.command.CommandArgs
 import me.ddevil.shiroi.craft.misc.variable.MessageVariable
+
 class CreationCommand
 constructor(
         plugin: MineMe,
@@ -14,7 +15,7 @@ constructor(
 ) : MineMeCommand(plugin) {
 
 
-    @Command(name = "create.mine", permission = "mineme.create.mine", inGameOnly = true)
+    @Command(name = "create.validMine", permission = "mineme.create.validMine", inGameOnly = true)
     fun createMine(args: CommandArgs) {
         val player = args.player
 
@@ -42,6 +43,12 @@ constructor(
             messageManager.sendMessage(player, MineMeLang.COMMAND_MINE_CREATE_NAME_REQUIRED)
 
         }) { name ->
+            if (plugin.mineManager.hasMine(name)) {
+                messageManager.sendMessage(player, MineMeLang.COMMAND_MINE_CREATE_NAME_IN_USE,
+                        MessageVariable("name", name)
+                )
+                return
+            }
             args.getStringOrElse(1, {
                 //No alias provided
                 messageManager.sendMessage(player, MineMeLang.COMMAND_MINE_CREATE_ALIAS_REQUIRED)
@@ -53,16 +60,15 @@ constructor(
                 }) { compositionName ->
                     val composition = plugin.mineManager.getComposition(compositionName)
                     if (composition == null) {
-                        messageManager.sendMessage(player, MineMeLang.COMPOSITION_NOT_FOUND,
+                        messageManager.sendMessage(player, MineMeLang.COMMAND_MINE_COMPOSITION_NOT_FOUND,
                                 MessageVariable("name", compositionName)
                         )
                         return
                     }
 
-                    //Create and register mine
+                    //Create and register validMine
                     val mine = loader.createMine(name, alias, composition, region)
                     plugin.mineManager.registerMine(mine)
-                    mine.enabled = true
                     mine.reset()
                     mine.counting = true
                     messageManager.sendMessage(player, MineMeLang.COMMAND_MINE_CREATE_SUCCESSFUL,
@@ -81,6 +87,10 @@ constructor(
         args.getStringOrElse(0, {
             messageManager.sendMessage(sender, MineMeLang.COMMAND_COMPOSITION_CREATE_NAME_REQUIRED)
         }) { name ->
+            if (plugin.mineManager.hasComposition(name)) {
+                messageManager.sendMessage(sender, MineMeLang.COMMAND_COMPOSITION_NAME_IN_USE)
+                return
+            }
             args.getStringOrElse(1, {
                 messageManager.sendMessage(sender, MineMeLang.COMMAND_COMPOSITION_CREATE_ALIAS_REQUIRED)
             }) { alias ->
