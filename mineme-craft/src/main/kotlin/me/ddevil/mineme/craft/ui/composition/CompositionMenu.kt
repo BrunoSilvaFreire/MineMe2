@@ -9,11 +9,13 @@ import me.ddevil.mineme.craft.ui.UIResources
 import me.ddevil.shiroi.craft.message.MessageManager
 import me.ddevil.shiroi.craft.util.ShiroiItemBuilder
 import me.ddevil.shiroi.craft.util.toBukkit
+import me.ddevil.shiroi.ui.api.UIPosition
 import me.ddevil.shiroi.ui.api.component.container.MenuSize
 import me.ddevil.shiroi.ui.api.component.holder.HolderClickListener
-import me.ddevil.shiroi.ui.api.component.misc.ItemSlotComponent
+import me.ddevil.shiroi.ui.api.component.misc.ClickableItemSlotComponent
 import me.ddevil.shiroi.ui.api.component.scrollable.UnderPanelScrollable
 import me.ddevil.shiroi.ui.api.event.UIClickEvent
+import me.ddevil.shiroi.ui.api.misc.Action
 import me.ddevil.shiroi.ui.api.updater.ItemUpdater
 import me.ddevil.shiroi.ui.shiroi.ShiroiMenu
 import me.ddevil.shiroi.ui.shiroi.ShiroiScrollerUpdater
@@ -41,17 +43,30 @@ class CompositionMenu(plugin: MineMe, val composition: MineComposition) : Shiroi
         })
         place(materialDisplays, 0, 0)
     }
+
+    override fun update0() {
+        materialDisplays.clear()
+        for (material in composition.compositionMap) {
+            val display = MineMaterialDisplay(composition, material, plugin.messageManager, object : Action {
+                override fun invoke(p1: UIClickEvent, p2: UIPosition) {
+                    composition.remove(material)
+                }
+            })
+            materialDisplays.add(display)
+        }
+    }
 }
 
 class MineMaterialDisplay(
         val composition: MineComposition,
         val material: MineMaterial,
-        val messageManager: MessageManager
-) : ItemSlotComponent(
+        val messageManager: MessageManager,
+        action: Action
+) : ClickableItemSlotComponent(
         object : ItemUpdater {
             override fun update(oldItem: ItemStack): ItemStack {
                 return ShiroiItemBuilder(messageManager, material.toBukkit())
                         .setName(material.toColorizedString(MineMeConstants.DECIMAL_FORMAT))
                         .build()
             }
-        }, material.toBukkit(), null)
+        }, material.toBukkit(), action, null)
