@@ -1,6 +1,5 @@
 package me.ddevil.mineme.craft.mine
 
-import co.aikar.taskchain.TaskChainTasks
 import com.sk89q.worldedit.regions.Region
 import me.ddevil.mineme.api.MineMeConstants
 import me.ddevil.mineme.api.composition.MineComposition
@@ -9,23 +8,24 @@ import me.ddevil.mineme.craft.api.mine.*
 import me.ddevil.mineme.craft.api.mine.executor.MineResetExecutor
 import me.ddevil.mineme.craft.api.mine.executor.MineResetExecutorType
 import me.ddevil.mineme.craft.config.MineMeConfigValue
-import me.ddevil.mineme.craft.event.MineDisabledEvent
+import me.ddevil.mineme.craft.event.MineUnloadedEvent
 import me.ddevil.mineme.craft.mine.config.InvalidMineConfig
 import me.ddevil.mineme.craft.mine.config.MineConfig
 import me.ddevil.mineme.craft.mine.config.ValidMineConfig
-import me.ddevil.mineme.craft.mine.loader.CuboidLoader
-import me.ddevil.mineme.craft.mine.loader.CylindricalLoader
-import me.ddevil.mineme.craft.mine.loader.EllipsoidLoader
-import me.ddevil.mineme.craft.mine.loader.PolygonalLoader
+import me.ddevil.mineme.craft.mine.loader.CuboidFactory
+import me.ddevil.mineme.craft.mine.loader.CylindricalFactory
+import me.ddevil.mineme.craft.mine.loader.EllipsoidFactory
+import me.ddevil.mineme.craft.mine.loader.PolygonalFactory
 import me.ddevil.mineme.craft.mine.repopulator.EmptyRepopulator
 import me.ddevil.mineme.craft.mine.repopulator.NormalRepopulator
 import me.ddevil.shiroi.craft.log.DebugLevel
 import me.ddevil.shiroi.craft.util.parseConfig
-import me.ddevil.shiroi.craft.util.set
 import me.ddevil.shiroi.craft.util.toMap
 import me.ddevil.util.Serializable
 import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import java.io.File
 import java.io.FileFilter
@@ -33,7 +33,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 
-class InternalMineManager(val plugin: MineMe) : MineManager {
+class InternalMineManager(val plugin: MineMe) : MineManager, Listener {
 
 
     override fun createDefaultResetExecutor(arg: Mine): MineResetExecutor {
@@ -47,17 +47,17 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
     private val loadedMines: MutableSet<Mine> = mutableSetOf()
 
     /**
-     * Repopulators and loaders are grouped together since they are NOT "unique".
+     * Repopulators and factories are grouped together since they are NOT "unique".
      */
     private val registeredRepopulators: MutableSet<MineRepopulator>
-    private val registeredLoaders: MutableSet<MineLoader<*>>
+    private val registeredFactories: MutableSet<MineFactory<*>>
     private var defaultExecutor: MineResetExecutorType
-    val minesFolder: File
-    val compositionsFolder: File
+    override val minesFolder: File
+    override val compositionsFolder: File
 
     init {
         registeredRepopulators = mutableSetOf(*createDefaultRepopulators())
-        registeredLoaders = mutableSetOf(*createDefaultLoaders())
+        registeredFactories = mutableSetOf(*createDefaultLoaders())
         this.minesFolder = File(plugin.dataFolder, MineMeConstants.MINE_FOLDER_NAME)
         this.compositionsFolder = File(plugin.dataFolder, MineMeConstants.COMPOSITION_FOLDER_NAME)
         this.defaultExecutor = MineResetExecutorType.getType(plugin.configManager.getValue(MineMeConfigValue.DEFAULT_MINE_RESET_EXECUTOR))
@@ -73,8 +73,8 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
     override val compositions: Set<MineComposition>
         get() = HashSet(loadedCompositions)
 
-    override val loaders: Set<MineLoader<*>>
-        get() = HashSet(registeredLoaders)
+    override val factories: Set<MineFactory<*>>
+        get() = HashSet(registeredFactories)
 
     override var defaultMineIcon: ItemStack by Delegates.notNull<ItemStack>()
         private set
@@ -86,14 +86,14 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
 
     override fun getRepopulator(name: String) = registeredRepopulators.firstOrNull { it.name == name }
 
-    override fun <R : Region> getLoader(type: Class<R>): MineLoader<R>? {
-        return loaders
+    override fun <R : Region> getLoader(type: Class<R>): MineFactory<R>? {
+        return factories
                 .firstOrNull { it.regionClass == type }
-                ?.let { it as? MineLoader<R> }
+                ?.let { it as? MineFactory<R> }
     }
 
-    override fun getLoader(type: MineType): MineLoader<*> {
-        return loaders.first { it.supportedType == type }
+    override fun getLoader(type: MineType): MineFactory<*> {
+        return factories.first { it.supportedType == type }
     }
 
     override fun reload() {
@@ -114,6 +114,7 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
     }
 
     override fun enable() {
+        plugin.registerListener(this)
         this.defaultMineIcon = parseConfig(plugin.configManager.getValue(MineMeConfigValue.DEFAULT_MINE_ICON),
                 plugin.messageManager)
         loadCompositionsAndMines()
@@ -122,14 +123,6 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
     override fun disable() {
     }
 
-    override fun disable(mine: Mine) {
-        plugin.pluginLogger.log("Disabling mine ${mine.name} ...")
-        loadedMines.remove(mine)
-        println(loadedMines)
-        println(mines)
-        save(mine)
-        MineDisabledEvent(mine).call()
-    }
 
     override fun loadMine(validMineConfig: ValidMineConfig): Mine {
         if (hasMine(validMineConfig.name)) {
@@ -137,7 +130,6 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
         }
         val mine = getLoader(validMineConfig.type).loadMine(validMineConfig.map)
         registerMine(mine)
-        mine.counting = true
         return mine
     }
 
@@ -145,24 +137,12 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
 
     override fun hasComposition(name: String) = getComposition(name) != null
 
-    override fun save(mine: Mine) {
-        plugin.pluginLogger.log("Saving mine '${mine.name}' ...")
-        saveSerializable(mine, getMineFile(mine))
-    }
 
     override fun save(mineComposition: MineComposition) {
         plugin.pluginLogger.log("Saving composition '${mineComposition.name}'...")
         saveSerializable(mineComposition, getMineCompositionFile(mineComposition))
     }
 
-    override fun delete(mine: Mine) {
-        plugin.pluginLogger.log("Deleting mine ${mine.name} ...")
-        mine.disable()
-        loadedMines.remove(mine)
-        println(loadedMines)
-        println(mines)
-        getMineFile(mine).delete()
-    }
 
     override fun findUnloadedMines(): List<MineConfig> {
         val list = ArrayList<MineConfig>()
@@ -188,20 +168,21 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
             EmptyRepopulator.INSTANCE
     )
 
-    private fun createDefaultLoaders(): Array<MineLoader<*>> {
+    private fun createDefaultLoaders(): Array<MineFactory<*>> {
         return arrayOf(
-                CuboidLoader(plugin),
-                CylindricalLoader(plugin),
-                EllipsoidLoader(plugin),
-                PolygonalLoader(plugin)
+                CuboidFactory(plugin),
+                CylindricalFactory(plugin),
+                EllipsoidFactory(plugin),
+                PolygonalFactory(plugin)
         )
     }
 
     override fun registerMine(mine: Mine) {
         loadedMines.add(mine)
-        if (!getMineFile(mine).exists()) {
-            save(mine)
+        if (!mine.enabled) {
+            mine.enable()
         }
+        mine.save()
     }
 
 
@@ -216,17 +197,9 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
     private fun getMineCompositionFile(comp: MineComposition) = File(compositionsFolder,
             "${comp.name}.${MineMeConstants.DEFAULT_FILE_EXTENSION}")
 
-    private fun getMineFile(mine: Mine) = File(minesFolder, "${mine.name}.${MineMeConstants.DEFAULT_FILE_EXTENSION}")
 
     private fun saveSerializable(serializable: Serializable, file: File) {
-        plugin.chainFactory.newChain<Any>().asyncFirst<Any>(
-                TaskChainTasks.FirstTask<Any> {
-                    val config = YamlConfiguration()
-                    config.set(serializable.serialize())
-                    config.save(file)
-                    return@FirstTask null
 
-                }).execute()
     }
 
     private fun loadCompositionsAndMines() {
@@ -247,9 +220,7 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
         for (mineConfig in findUnloadedMines().filterIsInstance<ValidMineConfig>()) {
             if (mineConfig.enabled) {
                 val mine = loadMine(mineConfig)
-                loadedMines.add(mine)
                 plugin.pluginLogger.log("Mine ${mine.name} loaded.")
-                mine.enable()
             } else {
                 plugin.pluginLogger.log("Mine file ${mineConfig.file.name} is disabled, skipping...")
 
@@ -277,4 +248,13 @@ class InternalMineManager(val plugin: MineMe) : MineManager {
         return compositions
     }
 
+    @EventHandler
+    private fun onMineUnloaded(e: MineUnloadedEvent) {
+        unregister(e.mine)
+    }
+
+
+    private fun unregister(mine: Mine) {
+        loadedMines.remove(mine)
+    }
 }

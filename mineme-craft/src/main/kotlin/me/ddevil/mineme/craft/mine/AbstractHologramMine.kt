@@ -29,7 +29,7 @@ abstract class AbstractHologramMine<R : Region> : AbstractMine<R>, HologramMine 
             field = value
         }
 
-    final override var formation: HologramFormation?
+    final override var formation: HologramFormation
         set(value) {
             internalHolograms.forEach { it.delete() }
             internalHolograms.clear()
@@ -97,10 +97,9 @@ abstract class AbstractHologramMine<R : Region> : AbstractMine<R>, HologramMine 
                 customHologramText: List<String> = emptyList()
     ) : super(plugin, alias, name, composition, region, icon, defaultRepopulator, resetDelay) {
         this.internalHolograms = HashSet()
-        this.formation = formation
-        if (formation != null) {
-            internalHolograms.addAll(formation.createHolograms(this))
-        }
+
+        this.formation = formation ?: plugin.hologramManager.createDefaultFormation(this)
+        internalHolograms.addAll(this.formation.createHolograms(this))
         hologramsEnabled = false
         this.useCustomHologramText = useCustomHologramText
         this.customHologramText = customHologramText
@@ -111,22 +110,24 @@ abstract class AbstractHologramMine<R : Region> : AbstractMine<R>, HologramMine 
     constructor(plugin: MineMe, map: Map<String, Any>) : super(plugin, map) {
         val holoMap = map.getMapAnyOrNull(MineMeConstants.MINE_HOLOGRAM_IDENTIFIER)
         this.internalHolograms = HashSet()
-        this.hologramsEnabled = false
-        this.useCustomHologramText = false
-        this.customHologramText = emptyList()
-        this.formation = null
-        this.internalUpdater = plugin.hologramManager.createDefaultUpdater(this)
+        //Temporary variables
+        var hologramsEnabled = false
+        var useCustomHologramText = false
+        var customHologramText = emptyList<String>()
+        var updater = plugin.hologramManager.createDefaultUpdater(this)
+        var formation = plugin.hologramManager.createDefaultFormation(this)
+
         if (holoMap != null) {
             //Load holo from config
             val holoConfig = HologramConfig(holoMap)
             val hologramManager = plugin.hologramManager
 
 
-            this.hologramsEnabled = holoConfig.hologramsEnabled
+            hologramsEnabled = holoConfig.hologramsEnabled
             if (hologramsEnabled) {
-                this.useCustomHologramText = holoConfig.useCustomHologramText
-                this.customHologramText = holoConfig.customHologramText
-                this.internalUpdater = plugin.hologramManager.loadUpdater(this,
+                useCustomHologramText = holoConfig.useCustomHologramText
+                customHologramText = holoConfig.customHologramText
+                updater = plugin.hologramManager.loadUpdater(this,
                         holoConfig.hologramUpdaterMeta ?: emptyMap(),
                         holoConfig.hologramUpdaterName)
                 //Load formation
@@ -135,22 +136,24 @@ abstract class AbstractHologramMine<R : Region> : AbstractMine<R>, HologramMine 
                     val tempFormation = hologramManager.getFormationLoader(formationName)
                     val formationMeta = holoConfig.formationMeta ?: emptyMap()
                     if (tempFormation != null) {
-                        this.formation = tempFormation.loadFormation(this, formationMeta)
+                        formation = tempFormation.loadFormation(this, formationMeta)
                     } else {
                         plugin.pluginLogger.log(
                                 "Couldn't find hologram formation '$formationName' while loading validMine" +
                                         " '$name', holograms will be disabled, please fix this validMine's formation!",
                                 DebugLevel.FUCK_MAN_SOUND_THE_ALARMS)
-                        this.formation = hologramManager.createDefaultFormation(this)
+                        formation = hologramManager.createDefaultFormation(this)
                     }
                 }
             }
         }
+        this.useCustomHologramText = useCustomHologramText
+        this.customHologramText = customHologramText
+        this.hologramsEnabled = hologramsEnabled
+        this.formation = formation
+        this.internalUpdater = updater
 
-        val form = formation
-        if (form != null) {
-            this.internalHolograms.addAll(form.createHolograms(this))
-        }
+        this.internalHolograms.addAll(formation.createHolograms(this))
         updateHolograms()
     }
 
@@ -185,9 +188,6 @@ abstract class AbstractHologramMine<R : Region> : AbstractMine<R>, HologramMine 
     private fun serializeHolograms() = immutableMap<String, Any> {
         this[MineMeConstants.MINE_HOLOGRAM_ENABLED_IDENTIFIER] = enabled
         this[MineMeConstants.MINE_HOLOGRAM_UPDATER_IDENTIFIER] = internalUpdater.serialize()
-        val formation = formation
-        if (formation != null) {
-            this[MineMeConstants.MINE_HOLOGRAM_FORMATION_IDENTIFIER] = formation.serialize()
-        }
+        this[MineMeConstants.MINE_HOLOGRAM_FORMATION_IDENTIFIER] = formation.serialize()
     }
 }

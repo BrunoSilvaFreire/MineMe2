@@ -12,25 +12,34 @@ import me.ddevil.mineme.craft.api.mine.MineRepopulator
 import me.ddevil.mineme.craft.api.mine.executor.MineResetExecutor
 import me.ddevil.mineme.craft.api.mine.executor.MineResetExecutorType
 import me.ddevil.mineme.craft.config.MineMeConfigValue
+import me.ddevil.mineme.craft.event.*
 import me.ddevil.mineme.craft.exception.MineNotEnabledException
 import me.ddevil.mineme.craft.mine.misc.CountdownRunnable
 import me.ddevil.mineme.craft.mine.misc.WorldEditIterator
 import me.ddevil.mineme.craft.mine.repopulator.EmptyRepopulator
 import me.ddevil.mineme.craft.mine.repopulator.FillMineRepopulator
+import me.ddevil.mineme.craft.util.saveTo
+import me.ddevil.mineme.craft.util.toWE
 import me.ddevil.shiroi.craft.util.toBukkit
 import me.ddevil.shiroi.craft.util.toShiroiStack
+import me.ddevil.shiroi.craft.util.toVector3
 import me.ddevil.util.getInt
 import me.ddevil.util.getMap
 import me.ddevil.util.getMapAny
 import me.ddevil.util.getString
+import me.ddevil.util.vector.Vector3
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.block.Block
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockExplodeEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.Vector
+import java.io.File
 
 abstract class AbstractMine<R : Region> : Mine {
 
@@ -65,7 +74,7 @@ abstract class AbstractMine<R : Region> : Mine {
         private set
 
     override val minedBlocksPercentage: Double
-        get() = (minedBlocks / volume).toDouble() * 100
+        get() = minedBlocks.toDouble() / volume * 100
 
     override val timeToNextReset: Int
         get() = resetDelay - currentCountdown
@@ -95,6 +104,10 @@ abstract class AbstractMine<R : Region> : Mine {
     final override var defaultExecutor: MineResetExecutor
 
     override val volume get() = region.area
+
+    override val maxY: Int get() = region.maximumPoint.blockY
+
+    override val file get() = File(plugin.mineManager.minesFolder, "$name.${MineMeConstants.DEFAULT_FILE_EXTENSION}")
 
     @JvmOverloads
     constructor(plugin: MineMe,
@@ -155,7 +168,6 @@ abstract class AbstractMine<R : Region> : Mine {
         this.countdownRunnable = CountdownRunnable(this)
         this.counting = false
 
-
     }
 
 
@@ -193,9 +205,19 @@ abstract class AbstractMine<R : Region> : Mine {
 
     override fun reset(repopulator: MineRepopulator, executor: MineResetExecutor) {
         checkIfEnabled()
+        val e = MineResetEvent(this)
+        e.call()
+        if (e.isCancelled) {
+            return
+        }
+        for (player in players) {
+            player.teleport(executor.getResetTeleportLocation(player))
+        }
         replaceBlocks(repopulator, executor)
         minedBlocks = 0
     }
+
+    override val players get() = Bukkit.getOnlinePlayers().filter { it in this }
 
     override fun reset(executor: MineResetExecutor) {
         reset(defaultRepopulator, executor)
@@ -203,9 +225,29 @@ abstract class AbstractMine<R : Region> : Mine {
 
     override fun clear() {
         checkIfEnabled()
+        val e = MineClearedEvent(this)
+        e.call()
+        if (e.isCancelled) {
+            return
+        }
         replaceBlocks(EmptyRepopulator.INSTANCE)
     }
 
+    override fun contains(block: Block) = contains(block.location)
+
+    override fun contains(player: Player): Boolean {
+        val loc = player.location
+        if (loc.blockY == maxY + 1) {
+            loc.y = maxY.toDouble()
+        }
+        return contains(loc)
+    }
+
+    override fun contains(location: Location) = contains(location.toVector3())
+
+    override fun contains(vector: Vector) = contains(vector.toVector3())
+
+    override fun contains(vector: Vector3<*>) = region.contains(vector.toWE())
 
     private fun checkIfEnabled() {
         if (!enabled) {
@@ -223,18 +265,27 @@ abstract class AbstractMine<R : Region> : Mine {
     override fun iterator() = WorldEditIterator(world, region)
 
     override fun delete() {
-        plugin.mineManager.delete(this)
+        disable()
+        file.delete()
+        MineDeletedEvent(this).call()
     }
 
     override fun disable() {
+        plugin.pluginLogger.log("Disabling mine '$name'...")
         if (counting) {
             counting = false
         }
         if (enabled) {
             enabled = false
         }
-        plugin.mineManager.disable(this)
         plugin.unregisterListener(this)
+        unload()
+        MineDisabledEvent(this).call()
+    }
+
+    override fun unload() {
+        MineUnloadedEvent(this).call()
+        save()
     }
 
     override fun enable() {
@@ -268,7 +319,8 @@ abstract class AbstractMine<R : Region> : Mine {
     }
 
     override fun save() {
-        plugin.mineManager.save(this)
+        MineSavedEvent(this).call()
+        saveTo(file, plugin)
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

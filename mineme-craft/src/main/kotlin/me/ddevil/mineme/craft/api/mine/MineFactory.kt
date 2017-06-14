@@ -3,7 +3,7 @@ package me.ddevil.mineme.craft.api.mine
 import com.sk89q.worldedit.regions.Region
 import me.ddevil.mineme.api.composition.MineComposition
 
-interface MineLoader<R : Region> {
+interface MineFactory<R : Region> {
 
     val regionClass: Class<R>
 

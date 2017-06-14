@@ -77,7 +77,6 @@ class GeneralCommands(plugin: MineMe) : MineMeCommand(plugin) {
                 )
                 return
             }
-            mine.clear()
             val lines = plugin.configManager.getValue(MineMeConfigValue.COMMAND_MINE_INFO)
             val variables = mine.exportMessageVariables()
             for (line in lines) {

@@ -1,38 +1,32 @@
 package me.ddevil.mineme.craft.api.mine.executor
 
-import com.google.common.collect.ImmutableMap
-import me.ddevil.mineme.api.MineMeConstants
 import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.craft.api.MineMeCraftConstants
 import me.ddevil.mineme.craft.api.mine.Mine
 import me.ddevil.mineme.craft.api.mine.MineRepopulator
+import me.ddevil.shiroi.craft.util.toVector3
 import me.ddevil.util.immutableMap
 import me.ddevil.util.set
-import org.bukkit.block.Block
+import org.bukkit.Location
+import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
 
-abstract class AbstractMineResetExecutor(override val mine: Mine) : MineResetExecutor {
-    protected fun setRandomBlock(block: Block, repopulator: MineRepopulator) {
-        val mat = repopulator.getBlock(mine, block.x, block.y, block.z)
-        block.type = mat.first
-        block.data = mat.second
+class AsyncMineResetExecutor(
+        mine: Mine,
+        var teleportLocation: Location,
+        var blocksPerSeconds: Int, private var plugin: MineMe
+) : AbstractMineResetExecutor(
+        mine) {
+
+
+    override fun getResetTeleportLocation(player: Player): Location {
+        return teleportLocation
     }
 
-    final override fun serialize(): Map<String, Any> = ImmutableMap.builder<String, Any>()
-            .put(MineMeConstants.MINE_EXECUTOR_TYPE_IDENTIFIER, type.name)
-            .put(MineMeConstants.MINE_EXECUTOR_META_IDENTIFIER, serializeMeta())
-            .build()
-
-    abstract fun serializeMeta(): Map<String, Any>
-}
-
-class AsyncMineResetExecutor(mine: Mine,
-                             private var blocksPerSeconds: Int,
-                             private var plugin: MineMe) : AbstractMineResetExecutor(
-        mine) {
 
     override fun serializeMeta(): Map<String, Any> = immutableMap {
         this[MineMeCraftConstants.MINE_RESET_EXECUTOR_BLOCKS_PER_SECOND_KEY] = blocksPerSeconds
+        this[MineMeCraftConstants.MINE_RESET_EXECUTOR_TELEPORT_LOCATION_KEY] = teleportLocation.toVector3().serialize()
     }
 
     override val type get() = MineResetExecutorType.ASYNC
@@ -66,20 +60,6 @@ class AsyncMineResetExecutor(mine: Mine,
                 }
             }
         }.runTaskTimer(plugin, timerDelay, timerDelay)
-    }
-
-
-}
-
-class SyncMineResetExecutor(mine: Mine) : AbstractMineResetExecutor(mine) {
-    override fun serializeMeta(): Map<String, Any> = emptyMap()
-
-    override val type get() = MineResetExecutorType.SYNC
-
-    override fun reset(repopulator: MineRepopulator) {
-        for (block in mine) {
-            setRandomBlock(block, repopulator)
-        }
     }
 
 

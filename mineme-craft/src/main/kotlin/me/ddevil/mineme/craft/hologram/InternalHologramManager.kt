@@ -5,17 +5,17 @@ import me.ddevil.mineme.craft.api.MineMeCraftConstants
 import me.ddevil.mineme.craft.api.hologram.Hologram
 import me.ddevil.mineme.craft.api.hologram.HologramManager
 import me.ddevil.mineme.craft.api.hologram.HologramProvider
-import me.ddevil.mineme.craft.api.hologram.formation.HologramFormationLoader
+import me.ddevil.mineme.craft.api.hologram.formation.HologramFormationFactory
 import me.ddevil.mineme.craft.api.hologram.updater.HologramUpdater
-import me.ddevil.mineme.craft.api.hologram.updater.HologramUpdaterLoader
+import me.ddevil.mineme.craft.api.hologram.updater.HologramUpdaterFactory
 import me.ddevil.mineme.craft.api.mine.HologramMine
 import me.ddevil.mineme.craft.config.MineMeConfigValue
 import me.ddevil.mineme.craft.hologram.formation.CenterHologramFormation
-import me.ddevil.mineme.craft.hologram.formation.loader.CenterHologramFormationLoader
-import me.ddevil.mineme.craft.hologram.formation.loader.CustomHologramFormationLoader
+import me.ddevil.mineme.craft.hologram.formation.loader.CenterHologramFormationFactory
+import me.ddevil.mineme.craft.hologram.formation.loader.CustomHologramFormationFactory
 import me.ddevil.mineme.craft.hologram.provider.holographicdisplays.HolographicDisplaysHandler
 import me.ddevil.mineme.craft.hologram.updater.SyncHologramUpdater
-import me.ddevil.mineme.craft.hologram.updater.loader.SyncHologramUpdaterLoader
+import me.ddevil.mineme.craft.hologram.updater.loader.SyncHologramUpdaterFactory
 import me.ddevil.shiroi.craft.log.DebugLevel
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -26,12 +26,12 @@ constructor(val plugin: MineMe) : HologramManager {
 
 
     private var handler: HologramHandler?
-    private val formationLoaders: MutableSet<HologramFormationLoader>
-    private var updaterLoaders: MutableList<HologramUpdaterLoader>
+    private val formationFactories: MutableSet<HologramFormationFactory>
+    private var updaterFactories: MutableList<HologramUpdaterFactory>
 
     init {
-        this.formationLoaders = HashSet()
-        this.updaterLoaders = ArrayList()
+        this.formationFactories = HashSet()
+        this.updaterFactories = ArrayList()
         this.handler = null
         if (plugin.configManager.getValue(MineMeConfigValue.HOLOGRAM_ENABLED))
             try {
@@ -55,19 +55,19 @@ constructor(val plugin: MineMe) : HologramManager {
     }
     override fun createDefaultFormation(mine: HologramMine) = CenterHologramFormation(this)
     private fun registerDefaultUpdaterLoaders() {
-        registerUpdaterLoader(SyncHologramUpdaterLoader(plugin))
+        registerUpdaterLoader(SyncHologramUpdaterFactory(plugin))
     }
 
     private fun registerDefaultFormations() {
-        registerFormationLoader(CenterHologramFormationLoader(this))
-        registerFormationLoader(CustomHologramFormationLoader(this))
+        registerFormationLoader(CenterHologramFormationFactory(this))
+        registerFormationLoader(CustomHologramFormationFactory(this))
     }
 
-    override fun registerFormationLoader(formation: HologramFormationLoader) {
-        formationLoaders.add(formation)
+    override fun registerFormationLoader(formation: HologramFormationFactory) {
+        formationFactories.add(formation)
     }
 
-    override fun getFormationLoader(string: String) = formationLoaders.firstOrNull { it.formationName == string }
+    override fun getFormationLoader(string: String) = formationFactories.firstOrNull { it.formationName == string }
 
     override fun createHologram(location: Location): Hologram {
         val h = handler ?: throw IllegalStateException("There is no hologram, handler defined")
@@ -75,8 +75,8 @@ constructor(val plugin: MineMe) : HologramManager {
         return holo
     }
 
-    override fun registerUpdaterLoader(loader: HologramUpdaterLoader) {
-        this.updaterLoaders.add(loader)
+    override fun registerUpdaterLoader(factory: HologramUpdaterFactory) {
+        this.updaterFactories.add(factory)
     }
 
     override fun createDefaultUpdater(mine: HologramMine) = SyncHologramUpdater(plugin, mine)
@@ -89,8 +89,8 @@ constructor(val plugin: MineMe) : HologramManager {
 
     }
 
-    private fun getUpdaterLoader(updaterName: String): HologramUpdaterLoader? {
-        return this.updaterLoaders.firstOrNull {
+    private fun getUpdaterLoader(updaterName: String): HologramUpdaterFactory? {
+        return this.updaterFactories.firstOrNull {
             it.updaterName == updaterName
         }
     }

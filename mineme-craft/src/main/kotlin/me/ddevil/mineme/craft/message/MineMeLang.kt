@@ -69,6 +69,8 @@ object MineMeLang {
 
     val UNABLE_TO_LOAD_MINE = Lang(Keys.UNABLE_TO_LOAD_MINE)
 
+    val MINE_COMPOSITION_CHANGED = Lang(Keys.MINE_COMPOSITION_CHANGED)
+
     object Keys {
 
         val MINE_NOT_FOUND = MineMeConfigValue(
@@ -233,10 +235,15 @@ object MineMeLang {
                 MineMeConfigSource.MESSAGES,
                 "mine.loaded"
         )
-        val  UNABLE_TO_LOAD_MINE= MineMeConfigValue(
+        val UNABLE_TO_LOAD_MINE = MineMeConfigValue(
                 "$5We were not able to load mine $1{name}$5! Check the mine's file.",
                 MineMeConfigSource.MESSAGES,
                 "mine.unableToLoad"
+        )
+        val  MINE_COMPOSITION_CHANGED = MineMeConfigValue(
+                "$3Mine composition changed to $1{alias} $3($2{name}$3).",
+                MineMeConfigSource.MESSAGES,
+                "mine.compositionChanged"
         )
 
     }

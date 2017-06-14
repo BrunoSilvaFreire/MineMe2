@@ -25,7 +25,7 @@ class CompositionMenu(plugin: MineMe, val composition: MineComposition) : Shiroi
         MenuSize.SIX_ROWS,
         UIResources.PRIMARY_BACKGROUND) {
     private var materialDisplays = UnderPanelScrollable(
-            MineMaterialDisplay::class.java, this, 5, 2,
+            MineMaterialDisplay::class.java, this, 9, 5,
             ShiroiScrollerUpdater(Material.EMERALD, plugin),
             UIResources.SECONDARY_BACKGROUND, UIResources.PRIMARY_BACKGROUND)
 

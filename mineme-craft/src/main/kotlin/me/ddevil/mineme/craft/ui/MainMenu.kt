@@ -85,9 +85,7 @@ class MainMenu(plugin: MineMe) : FileLangShiroiMenu<MineMe, MineMeConfigSource>(
                     })
             )
         }
-        println(plugin.mineManager.mines)
         for (mine in plugin.mineManager.mines) {
-            println("Adding $mine")
             loadedMinesDisplay.add(
                     MineDisplay(mine, plugin.messageManager, object : Action {
                         override fun invoke(e: UIClickEvent, localPosition: UIPosition) {

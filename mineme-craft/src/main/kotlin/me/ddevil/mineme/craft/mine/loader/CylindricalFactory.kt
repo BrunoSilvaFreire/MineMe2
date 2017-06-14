@@ -7,7 +7,7 @@ import me.ddevil.mineme.craft.api.mine.Mine
 import me.ddevil.mineme.craft.api.mine.MineType
 import me.ddevil.mineme.craft.mine.CylindricalMine
 
-class CylindricalLoader(plugin: MineMe) : AbstractLoader<CylinderRegion>(plugin) {
+class CylindricalFactory(plugin: MineMe) : AbstractFactory<CylinderRegion>(plugin) {
     override val regionClass get() = CylinderRegion::class.java
     override val supportedType = MineType.CYLINDRICAL
 

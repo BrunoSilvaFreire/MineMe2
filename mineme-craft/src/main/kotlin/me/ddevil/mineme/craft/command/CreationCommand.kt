@@ -15,7 +15,7 @@ constructor(
 ) : MineMeCommand(plugin) {
 
 
-    @Command(name = "create.validMine", permission = "mineme.create.validMine", inGameOnly = true)
+    @Command(name = "create.mine", permission = "mineme.create.mine", inGameOnly = true)
     fun createMine(args: CommandArgs) {
         val player = args.player
 
@@ -66,7 +66,7 @@ constructor(
                         return
                     }
 
-                    //Create and register validMine
+                    //Create and register mine
                     val mine = loader.createMine(name, alias, composition, region)
                     plugin.mineManager.registerMine(mine)
                     mine.reset()

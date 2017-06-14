@@ -6,7 +6,7 @@ import me.ddevil.mineme.craft.api.hologram.updater.HologramUpdater
 
 interface HologramMine : Mine {
 
-    val formation: HologramFormation?
+    val formation: HologramFormation
 
     var hologramUpdater: HologramUpdater
 

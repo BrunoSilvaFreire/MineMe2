@@ -7,7 +7,7 @@ import me.ddevil.mineme.craft.api.mine.Mine
 import me.ddevil.mineme.craft.api.mine.MineType
 import me.ddevil.mineme.craft.mine.PolygonalMine
 
-class PolygonalLoader(plugin: MineMe) : AbstractLoader<Polygonal2DRegion>(plugin) {
+class PolygonalFactory(plugin: MineMe) : AbstractFactory<Polygonal2DRegion>(plugin) {
     override val regionClass = Polygonal2DRegion::class.java
     override val supportedType = MineType.POLYGON
 

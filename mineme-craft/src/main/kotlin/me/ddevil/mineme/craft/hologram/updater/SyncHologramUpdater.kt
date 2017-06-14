@@ -5,11 +5,14 @@ import me.ddevil.mineme.craft.api.mine.HologramMine
 import me.ddevil.mineme.craft.api.mine.MineClockListener
 
 class SyncHologramUpdater(plugin: MineMe, mine: HologramMine) : AbstractHologramUpdater(plugin, mine) {
-    lateinit private var listener: MineClockListener
+    private var listener: MineClockListener? = null
     override val name = "sync"
     override val meta: Map<String, Any> = emptyMap()
     override fun disable() {
-        mine.removeClockListener(listener)
+        val l = listener
+        if (l != null) {
+            mine.removeClockListener(l)
+        }
     }
 
     override fun enable() {

@@ -9,5 +9,6 @@ object MineMeCraftConstants {
 
     const val HOLOGRAPHIC_DISPLAYS_NAME = "HolographicDisplays"
     const val MINE_RESET_EXECUTOR_BLOCKS_PER_SECOND_KEY = "blocksPerSecond"
+    const val MINE_RESET_EXECUTOR_TELEPORT_LOCATION_KEY = "teleportLocation"
 
 }

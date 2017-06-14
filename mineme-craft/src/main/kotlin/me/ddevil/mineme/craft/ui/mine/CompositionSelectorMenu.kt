@@ -5,6 +5,7 @@ import me.ddevil.mineme.craft.config.MineMeConfigSource
 import me.ddevil.mineme.craft.message.MineMeLang
 import me.ddevil.mineme.craft.ui.UIResources
 import me.ddevil.mineme.craft.ui.composition.CompositionDisplay
+import me.ddevil.mineme.craft.util.exportMessageVariables
 import me.ddevil.shiroi.ui.api.UIPosition
 import me.ddevil.shiroi.ui.api.component.BackButton
 import me.ddevil.shiroi.ui.api.component.CloseButton
@@ -39,6 +40,7 @@ class CompositionSelectorMenu(plugin: MineMe, val mineMenu: MineMenu) : FileLang
                     if (p1.isRightClick) {
                         mine.reset()
                     }
+                    plugin.messageManager.sendMessage(p1.player, MineMeLang.MINE_COMPOSITION_CHANGED, *composition.exportMessageVariables())
                 }
             })
             container.add(display)

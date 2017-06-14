@@ -2,7 +2,7 @@ package me.ddevil.mineme.craft.api.hologram.updater
 
 import me.ddevil.mineme.craft.api.mine.HologramMine
 
-interface HologramUpdaterLoader {
+interface HologramUpdaterFactory {
 
     val updaterName: String
 

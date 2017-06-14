@@ -2,7 +2,7 @@ package me.ddevil.mineme.craft.api.hologram.formation
 
 import me.ddevil.mineme.craft.api.mine.HologramMine
 
-interface HologramFormationLoader {
+interface HologramFormationFactory {
 
     val formationName: String
 

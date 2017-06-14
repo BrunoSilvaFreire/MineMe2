@@ -6,7 +6,7 @@ import me.ddevil.mineme.craft.api.mine.HologramMine
 import me.ddevil.mineme.craft.hologram.formation.CustomHologramFormation
 import me.ddevil.shiroi.craft.util.toVector3
 
-class CustomHologramFormationLoader(hologramManager: HologramManager) : AbstractHologramFormationLoader(hologramManager) {
+class CustomHologramFormationFactory(hologramManager: HologramManager) : AbstractHologramFormationFactory(hologramManager) {
     override val formationName: String get() = CustomHologramFormation.NAME
 
     override fun loadFormation(mine: HologramMine, map: Map<String, Any>): HologramFormation {

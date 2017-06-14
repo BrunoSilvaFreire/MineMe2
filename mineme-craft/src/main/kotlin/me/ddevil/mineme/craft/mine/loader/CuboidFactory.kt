@@ -7,7 +7,7 @@ import me.ddevil.mineme.craft.api.mine.Mine
 import me.ddevil.mineme.craft.api.mine.MineType
 import me.ddevil.mineme.craft.mine.CuboidMine
 
-class CuboidLoader(plugin: MineMe) : AbstractLoader<CuboidRegion>(plugin) {
+class CuboidFactory(plugin: MineMe) : AbstractFactory<CuboidRegion>(plugin) {
 
     override val regionClass: Class<CuboidRegion>
         get() = CuboidRegion::class.java

@@ -7,7 +7,7 @@ import me.ddevil.mineme.craft.api.mine.Mine
 import me.ddevil.mineme.craft.api.mine.MineType
 import me.ddevil.mineme.craft.mine.EllipsoidMine
 
-class EllipsoidLoader(plugin: MineMe) : AbstractLoader<EllipsoidRegion>(plugin) {
+class EllipsoidFactory(plugin: MineMe) : AbstractFactory<EllipsoidRegion>(plugin) {
     override val regionClass get() = EllipsoidRegion::class.java
     override val supportedType = MineType.ELLIPSOID
 

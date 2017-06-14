@@ -8,6 +8,7 @@ import me.ddevil.mineme.craft.mine.config.ValidMineConfig
 import me.ddevil.shiroi.craft.misc.CraftReloadable
 import me.ddevil.shiroi.util.misc.Toggleable
 import org.bukkit.inventory.ItemStack
+import java.io.File
 
 interface MineManager : Toggleable, CraftReloadable {
 
@@ -19,7 +20,7 @@ interface MineManager : Toggleable, CraftReloadable {
 
     val compositions: Set<MineComposition>
 
-    val loaders: Set<MineLoader<*>>
+    val factories: Set<MineFactory<*>>
 
     fun getMine(name: String): Mine?
 
@@ -27,15 +28,11 @@ interface MineManager : Toggleable, CraftReloadable {
 
     fun getComposition(name: String): MineComposition?
 
-    fun delete(mine: Mine)
-
-    fun save(mine: Mine)
-
     fun save(mineComposition: MineComposition)
 
-    fun <R : Region> getLoader(type: Class<R>): MineLoader<R>?
+    fun <R : Region> getLoader(type: Class<R>): MineFactory<R>?
 
-    fun getLoader(type: MineType): MineLoader<*>
+    fun getLoader(type: MineType): MineFactory<*>
 
     fun createDefaultResetExecutor(arg: Mine): MineResetExecutor
 
@@ -43,12 +40,16 @@ interface MineManager : Toggleable, CraftReloadable {
 
     fun hasComposition(name: String): Boolean
 
-    fun disable(mine: Mine)
-
     fun findUnloadedMines(): List<MineConfig>
 
     fun loadMine(validMineConfig: ValidMineConfig): Mine
+
     fun registerMine(mine: Mine)
+
     fun registerMineComposition(composition: MineComposition)
+
+    val compositionsFolder: File
+
+    val minesFolder: File
 }
 

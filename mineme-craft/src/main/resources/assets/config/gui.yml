@@ -39,7 +39,7 @@ resources:
     data: 1
     name: $4Pause Mine Countdown
     lore:
-    - '$3This pauses the validMine''s reset countdown.'
+    - '$3This pauses the mine''s reset countdown.'
     - '$3The countdown can be resumed again by'
     - '$3pressing this button again.'
   resumeCountdown:
@@ -47,7 +47,7 @@ resources:
     data: 10
     name: $5Resume Mine Countdown
     lore:
-    - '$3This resumes the validMine's reset countdown.'
+    - '$3This resumes the mine''s reset countdown.'
     - '$3The countdown can be again by'
     - '$3pressing this button again.'
   disableButton:
@@ -61,4 +61,4 @@ resources:
     type: DIAMOND_BLOCK
     name: $1Change Composition
     lore:
-    - $3Opens a menu to change this validMine's composition
+    - '$3Opens a menu to change this validMine''s composition'

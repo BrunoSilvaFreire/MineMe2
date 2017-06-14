@@ -5,11 +5,15 @@ import me.ddevil.mineme.craft.api.mine.executor.MineResetExecutor
 import me.ddevil.shiroi.util.misc.Toggleable
 import me.ddevil.util.Serializable
 import me.ddevil.util.misc.Nameable
+import me.ddevil.util.vector.Vector3
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.block.Block
+import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.Vector
+import java.io.File
 
 interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable, Listener {
     //<editor-fold desc="General" defaultstate="collapsed">
@@ -22,6 +26,10 @@ interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable, Listener {
     var defaultRepopulator: MineRepopulator
 
     val world: World
+
+    val file: File
+
+    fun unload()
 
     /**
      * Resets the validMine
@@ -59,9 +67,13 @@ interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable, Listener {
      */
     fun clear()
 
+    val players: List<Player>
+
     val minedBlocks: Int
 
     val minedBlocksPercentage: Double
+
+    val maxY: Int
 
     val volume: Int
 
@@ -90,6 +102,15 @@ interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable, Listener {
 
     fun removeClockListener(listener: MineClockListener)
 
+    operator fun contains(block: Block): Boolean
+
+    operator fun contains(player: Player): Boolean
+
+    operator fun contains(location: Location): Boolean
+
+    operator fun contains(vector: Vector): Boolean
+
+    operator fun contains(vector: Vector3<*>): Boolean
 
     //</editor-fold>
 

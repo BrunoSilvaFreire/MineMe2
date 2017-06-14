@@ -34,7 +34,7 @@ class PolygonalMine : AbstractHologramMine<Polygonal2DRegion> {
     }
 
     override fun serializeRegion(): Map<String, Any> = immutableMap {
-        this[POINTS_KEY] = region.points.map { it.toShiroi() }
+        this[POINTS_KEY] = region.points.map { it.toShiroi().serialize() }
         this[MineMeConstants.MINIMUM_Y_KEY] = region.minimumY
         this[MineMeConstants.MAXIMUM_Y_KEY] = region.maximumY
     }
