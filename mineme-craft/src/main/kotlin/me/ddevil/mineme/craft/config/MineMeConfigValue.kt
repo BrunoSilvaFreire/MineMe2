@@ -31,9 +31,9 @@ class MineMeConfigValue<out T : Any>(
                 "plugin.messageSeparator")
 
         val DEFAULT_MINE_RESET_DELAY = MineMeConfigValue(
-                10,
+                60,
                 MineMeConfigSource.MAIN,
-                "mines.defaults.resetDelay"
+                "mines.defaults.reset.resetDelay"
         )
         val HOLOGRAM_PROVIDER = MineMeConfigValue(
                 "HOLOGRAPHIC_DISPLAYS",
@@ -91,6 +91,22 @@ class MineMeConfigValue<out T : Any>(
                 ),
                 MineMeConfigSource.MESSAGES,
                 "command.info"
+        )
+        val LOAD_EXAMPLES = MineMeConfigValue(
+                true,
+                MineMeConfigSource.MAIN,
+                "misc.loadExamples"
+        )
+        val MATERIAL_ICON_NAME = MineMeConfigValue(
+                "$1{type}$3:$2{data}",
+                MineMeConfigSource.GUI,
+                "misc.materialIcon.name"
+        )
+        val MATERIAL_ICON_LORE = MineMeConfigValue(
+                listOf("$3Percentage: $1{percentage}$3%",
+                        "{value}"),
+                MineMeConfigSource.GUI,
+                "misc.materialIcon.lore"
         )
     }
 }

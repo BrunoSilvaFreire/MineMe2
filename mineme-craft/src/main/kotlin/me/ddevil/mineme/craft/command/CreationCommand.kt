@@ -15,7 +15,10 @@ constructor(
 ) : MineMeCommand(plugin) {
 
 
-    @Command(name = "create.mine", permission = "mineme.create.mine", inGameOnly = true)
+    @Command(name = "create.mine",
+            permission = "mineme.create.mine",
+            usage = "/mm create mine {name} {alias} {composition}",
+            inGameOnly = true)
     fun createMine(args: CommandArgs) {
         val player = args.player
 
@@ -41,7 +44,7 @@ constructor(
         args.getStringOrElse(0, {
             //No name provided
             messageManager.sendMessage(player, MineMeLang.COMMAND_MINE_CREATE_NAME_REQUIRED)
-
+            args.sendUsage()
         }) { name ->
             if (plugin.mineManager.hasMine(name)) {
                 messageManager.sendMessage(player, MineMeLang.COMMAND_MINE_CREATE_NAME_IN_USE,
@@ -52,11 +55,12 @@ constructor(
             args.getStringOrElse(1, {
                 //No alias provided
                 messageManager.sendMessage(player, MineMeLang.COMMAND_MINE_CREATE_ALIAS_REQUIRED)
-
+                args.sendUsage()
             }) { alias ->
                 args.getStringOrElse(2, {
                     //No composition provided
                     messageManager.sendMessage(player, MineMeLang.COMMAND_MINE_CREATE_COMPOSITION_REQUIRED)
+                    args.sendUsage()
                 }) { compositionName ->
                     val composition = plugin.mineManager.getComposition(compositionName)
                     if (composition == null) {
@@ -69,8 +73,6 @@ constructor(
                     //Create and register mine
                     val mine = loader.createMine(name, alias, composition, region)
                     plugin.mineManager.registerMine(mine)
-                    mine.reset()
-                    mine.counting = true
                     messageManager.sendMessage(player, MineMeLang.COMMAND_MINE_CREATE_SUCCESSFUL,
                             MessageVariable("name", mine.name),
                             MessageVariable("alias", mine.alias),
@@ -81,7 +83,10 @@ constructor(
         }
     }
 
-    @Command(name = "create.composition", permission = "mineme.create.composition")
+    @Command(name = "create.composition",
+            permission = "mineme.create.composition",
+            usage = "/mm create composition {name} {alias}"
+            )
     fun createComposition(args: CommandArgs) {
         val sender = args.sender
         args.getStringOrElse(0, {

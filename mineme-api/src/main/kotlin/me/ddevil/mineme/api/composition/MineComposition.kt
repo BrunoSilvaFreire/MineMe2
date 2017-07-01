@@ -75,12 +75,12 @@ open class MineComposition : AbstractNameableDescribable, Serializable {
         return toIterate.max() ?: throw IllegalStateException("There are no materials in the composition!")
     }
 
-    override fun serialize(): Map<String, Any> = immutableStringAnyMapBuilder()
-            .put(DEFAULT_NAME_IDENTIFIER, name)
-            .put(DEFAULT_ALIAS_IDENTIFIER, alias)
-            .put(DEFAULT_DESCRIPTION_IDENTIFIER, description)
-            .put(MineMeConstants.MINE_COMPOSITION_MATERIALS_IDENTIFIER, compositionMap.map(MineMaterial::serialize))
-            .build()
+    override fun serialize(): Map<String, Any> = immutableMap {
+        this[DEFAULT_NAME_IDENTIFIER] = name
+        this[DEFAULT_ALIAS_IDENTIFIER] = alias
+        this[DEFAULT_DESCRIPTION_IDENTIFIER] = description
+        this[MineMeConstants.MINE_COMPOSITION_MATERIALS_IDENTIFIER] = compositionMap.map(MineMaterial::serialize)
+    }
 
     private fun sortList() {
         Collections.sort(compositionMap)
@@ -90,5 +90,7 @@ open class MineComposition : AbstractNameableDescribable, Serializable {
         this[MineMeConstants.ID_IDENTIFIER] = name
         this[MineMeConstants.REGISTERED_IDENTIFIER] = isRegistered
     }
+
+    operator fun contains(material: MineMaterial) = material in compositionMap
 
 }

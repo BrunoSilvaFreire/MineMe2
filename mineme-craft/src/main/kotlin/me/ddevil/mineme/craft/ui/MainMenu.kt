@@ -8,7 +8,6 @@ import me.ddevil.mineme.craft.mine.config.ValidMineConfig
 import me.ddevil.mineme.craft.ui.composition.CompositionDisplay
 import me.ddevil.mineme.craft.ui.mine.MineDisplay
 import me.ddevil.mineme.craft.ui.mine.UnloadedMineDisplay
-import me.ddevil.mineme.craft.util.exportMessageVariables
 import me.ddevil.shiroi.craft.misc.variable.MessageVariable
 import me.ddevil.shiroi.ui.api.UIPosition
 import me.ddevil.shiroi.ui.api.component.container.MenuSize
@@ -73,7 +72,7 @@ class MainMenu(plugin: MineMe) : FileLangShiroiMenu<MineMe, MineMeConfigSource>(
                                 val mine = unloadedMine.loadMine(plugin.mineManager)
                                 plugin.messageManager.sendMessage(sender,
                                         MineMeLang.MINE_LOADED,
-                                        *mine.exportMessageVariables())
+                                        *mine.exportVariables())
                             } else {
                                 plugin.messageManager.sendMessage(sender, MineMeLang.UNABLE_TO_LOAD_MINE,
                                         MessageVariable("name", unloadedMine.file.name)

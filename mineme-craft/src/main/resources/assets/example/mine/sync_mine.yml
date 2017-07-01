@@ -1,0 +1,30 @@
+name: sync_mine
+alias: SyncMine
+enabled: false
+resetConfig:
+  resetDelay: 60
+  repopulator: normal
+  executor:
+    type: SYNC
+    meta: &id001 {}
+icon:
+  type: REDSTONE_BLOCK
+type: CUBOID
+world: world
+composition: azul
+region:
+  x1: 17
+  y1: 117
+  z1: -63
+  x2: 7
+  y2: 132
+  z2: -53
+holograms:
+  enabled: true
+  hologramUpdater:
+    name: sync
+    meta: *id001
+  formation:
+    name: center
+    meta:
+      yOffset: 0

@@ -20,13 +20,11 @@ import me.ddevil.mineme.craft.mine.repopulator.EmptyRepopulator
 import me.ddevil.mineme.craft.mine.repopulator.FillMineRepopulator
 import me.ddevil.mineme.craft.util.saveTo
 import me.ddevil.mineme.craft.util.toWE
+import me.ddevil.shiroi.craft.misc.variable.MessageVariable
 import me.ddevil.shiroi.craft.util.toBukkit
 import me.ddevil.shiroi.craft.util.toShiroiStack
 import me.ddevil.shiroi.craft.util.toVector3
-import me.ddevil.util.getInt
-import me.ddevil.util.getMap
-import me.ddevil.util.getMapAny
-import me.ddevil.util.getString
+import me.ddevil.util.*
 import me.ddevil.util.vector.Vector3
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -147,13 +145,13 @@ abstract class AbstractMine<R : Region> : Mine {
         this.region = loadRegion(map.getMapAny(MineMeConstants.MINE_REGION_IDENTIFIER))
         //Composition
         val compositionName = map.getString(MineMeConstants.MINE_COMPOSITION_IDENTIFIER)
-        this.composition = plugin.mineManager.getComposition(compositionName) ?: throw IllegalStateException("Couldn't find required composition '$compositionName' for validMine $name!")
+        this.composition = plugin.mineManager.getComposition(compositionName) ?: throw IllegalStateException("Couldn't find required composition '$compositionName' for mine $name!")
 
         //Resets
         val resetMap = map.getMapAny(MineMeConstants.MINE_RESET_CONFIG_IDENTIFIER)
         //Repopulator
         val repopulatorName = resetMap.getString(MineMeConstants.MINE_REPOPULATOR_IDENTIFIER)
-        this.defaultRepopulator = plugin.mineManager.getRepopulator(repopulatorName) ?: throw IllegalStateException("Couldn't find required repopulator '$repopulatorName' for validMine $name!")
+        this.defaultRepopulator = plugin.mineManager.getRepopulator(repopulatorName) ?: throw IllegalStateException("Couldn't find required repopulator '$repopulatorName' for mine $name!")
         //Executor
         val executorMap = resetMap.getMapAny(MineMeConstants.MINE_EXECUTOR_CONFIG_IDENTIFIER)
         val executorTypeName = executorMap.getString(MineMeConstants.MINE_EXECUTOR_TYPE_IDENTIFIER)
@@ -322,6 +320,22 @@ abstract class AbstractMine<R : Region> : Mine {
         MineSavedEvent(this).call()
         saveTo(file, plugin)
     }
+
+    override fun exportVariables() = arrayOf(
+            MessageVariable(MineMeConstants.MINE_NAME_IDENTIFIER, name),
+            MessageVariable(MineMeConstants.MINE_ALIAS_IDENTIFIER, alias),
+            MessageVariable(MineMeConstants.MINE_TYPE_IDENTIFIER, type.toString()),
+            MessageVariable(MineMeConstants.MINE_ENABLED_IDENTIFIER, enabled.toString()),
+            MessageVariable(MineMeConstants.MINE_COMPOSITION_IDENTIFIER, composition.name),
+            MessageVariable(MineMeConstants.MINE_WORLD_IDENTIFIER, world.name),
+            MessageVariable(MineMeConstants.MINE_MINED_BLOCKS_IDENTIFIER, minedBlocks.toString()),
+            MessageVariable(MineMeConstants.MINE_VOLUME_IDENTIFIER, volume.toString()),
+            MessageVariable(MineMeConstants.MINE_BLOCKS_PERCENT_LEFT_IDENTIFIER,
+                    MineMeConstants.DECIMAL_FORMAT.format(minedBlocksPercentage)),
+            MessageVariable(MineMeConstants.MINE_RESET_TIME_PASSED_IDENTIFIER, currentCountdown.toSecondsString()),
+            MessageVariable(MineMeConstants.MINE_TOTAL_RESET_TIME_IDENTIFIER, resetDelay.toSecondsString()),
+            MessageVariable(MineMeConstants.MINE_RESET_TIME_LEFT_IDENTIFIER, timeToNextReset.toSecondsString())
+    )
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onBlockBreak(e: BlockBreakEvent) {

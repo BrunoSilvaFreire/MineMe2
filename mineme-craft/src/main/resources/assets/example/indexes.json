@@ -1,0 +1,13 @@
+{
+  "mine": [
+    "async_mine",
+    "sync_mine"
+  ],
+  "composition": [
+    "azul",
+    "vermelho",
+    "nether",
+    "sunshine",
+    "translucent"
+  ]
+}

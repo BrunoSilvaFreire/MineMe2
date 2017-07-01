@@ -8,20 +8,20 @@ resources:
     name: '&r'
   teleportButton:
     type: ENDER_PEARL
-    name: $1Teleport to validMine location!
+    name: '$1Teleport to mine location!'
     lore:
     - '$3The spawn location will be'
-    - '$3the top-y-center of the validMine :)'
+    - '$3the top-y-center of the mine :)'
   resetButton:
     type: WOOD_PICKAXE
     data: 0
-    name: '$1Reset validMine'
+    name: '$1Reset mine'
     lore:
-    - '$1Forces the validMine to reset'
+    - '$1Forces the mine to reset'
     - '$1like... $4RIGHT NOW!'
   clearButton:
     type: IRON_PICKAXE
-    name: '$2Clears the validMine!'
+    name: '$2Clears the mine!'
   backButton:
     type: EMERALD
     name: '$5Back'
@@ -32,7 +32,7 @@ resources:
     type: TNT
     name: '$4Delete Mine'
     lore:
-    - '$4This deletes the validMine permanently.'
+    - '$4This deletes the mine permanently.'
     - '$4This is not reversible.'
   pauseCountdown:
     type: INK_SACK
@@ -54,11 +54,11 @@ resources:
     type: REDSTONE_TORCH_ON
     name: $4Disable Mine
     lore:
-    - '$4This unloads the validMine and prevents'
+    - '$4This unloads the mine and prevents'
     - '$4it from being loaded in the next start-ups.'
-    - '$4The validMine can be re-enabled through it's config'
+    - '$4The mine can be re-enabled through it''s config'
   changeComposition:
     type: DIAMOND_BLOCK
     name: $1Change Composition
     lore:
-    - '$3Opens a menu to change this validMine''s composition'
+    - '$3Opens a menu to change this mine''s composition'

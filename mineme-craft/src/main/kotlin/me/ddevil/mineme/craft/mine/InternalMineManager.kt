@@ -1,6 +1,8 @@
 package me.ddevil.mineme.craft.mine
 
 import com.sk89q.worldedit.regions.Region
+import me.ddevil.json.JsonObject
+import me.ddevil.json.parse.JsonParser
 import me.ddevil.mineme.api.MineMeConstants
 import me.ddevil.mineme.api.composition.MineComposition
 import me.ddevil.mineme.craft.MineMe
@@ -12,16 +14,18 @@ import me.ddevil.mineme.craft.event.MineUnloadedEvent
 import me.ddevil.mineme.craft.mine.config.InvalidMineConfig
 import me.ddevil.mineme.craft.mine.config.MineConfig
 import me.ddevil.mineme.craft.mine.config.ValidMineConfig
-import me.ddevil.mineme.craft.mine.loader.CuboidFactory
-import me.ddevil.mineme.craft.mine.loader.CylindricalFactory
-import me.ddevil.mineme.craft.mine.loader.EllipsoidFactory
-import me.ddevil.mineme.craft.mine.loader.PolygonalFactory
+import me.ddevil.mineme.craft.mine.factory.CuboidFactory
+import me.ddevil.mineme.craft.mine.factory.CylindricalFactory
+import me.ddevil.mineme.craft.mine.factory.EllipsoidFactory
+import me.ddevil.mineme.craft.mine.factory.PolygonalFactory
 import me.ddevil.mineme.craft.mine.repopulator.EmptyRepopulator
 import me.ddevil.mineme.craft.mine.repopulator.NormalRepopulator
 import me.ddevil.shiroi.craft.log.DebugLevel
 import me.ddevil.shiroi.craft.util.parseConfig
 import me.ddevil.shiroi.craft.util.toMap
 import me.ddevil.util.Serializable
+import me.ddevil.util.getList
+import me.ddevil.util.isEmpty
 import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.event.EventHandler
@@ -54,13 +58,43 @@ class InternalMineManager(val plugin: MineMe) : MineManager, Listener {
     private var defaultExecutor: MineResetExecutorType
     override val minesFolder: File
     override val compositionsFolder: File
+    private val examplesIndexes: JsonObject
 
     init {
         registeredRepopulators = mutableSetOf(*createDefaultRepopulators())
         registeredFactories = mutableSetOf(*createDefaultLoaders())
         this.minesFolder = File(plugin.dataFolder, MineMeConstants.MINE_FOLDER_NAME)
+
+        this.examplesIndexes = JsonParser().parseObject(plugin.getResource("assets/example/indexes.json"))
+        if (!minesFolder.exists()) {
+            minesFolder.mkdirs()
+        }
+        val loadExamples = plugin.configManager.getValue(MineMeConfigValue.LOAD_EXAMPLES)
+        if (loadExamples && minesFolder.isEmpty()) {
+            unloadExampleMines()
+        }
         this.compositionsFolder = File(plugin.dataFolder, MineMeConstants.COMPOSITION_FOLDER_NAME)
+        if (!compositionsFolder.exists()) {
+            compositionsFolder.mkdirs()
+        }
+        if (loadExamples && compositionsFolder.isEmpty()) {
+            unloadExampleCompositions()
+        }
         this.defaultExecutor = MineResetExecutorType.getType(plugin.configManager.getValue(MineMeConfigValue.DEFAULT_MINE_RESET_EXECUTOR))
+    }
+
+    private fun unloadExampleCompositions() = unloadExamples("composition", compositionsFolder)
+
+
+    private fun unloadExampleMines() = unloadExamples("mine", minesFolder)
+
+    private fun unloadExamples(p: String, parentFolder: File) {
+        val path = "assets/example/$p"
+        val items = examplesIndexes.getList<String>(p)
+        for (item in items) {
+            val itemPath = "$path/$item.yml"
+            plugin.saveResource(itemPath, File(parentFolder, "$item.yml"))
+        }
     }
 
 
@@ -179,9 +213,9 @@ class InternalMineManager(val plugin: MineMe) : MineManager, Listener {
 
     override fun registerMine(mine: Mine) {
         loadedMines.add(mine)
-        if (!mine.enabled) {
-            mine.enable()
-        }
+        mine.enable()
+        mine.reset()
+        mine.counting = true
         mine.save()
     }
 

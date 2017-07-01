@@ -8,7 +8,7 @@ class EmptyRepopulator private constructor() : AbstractRepopulator(
         "Empty",
         listOf(
                 "This repopulator basically empties",
-                "every validMine, it always returns air, ",
+                "every mine, it always returns air, ",
                 "no matter what."
         )
 ) {

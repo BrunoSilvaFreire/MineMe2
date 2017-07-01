@@ -1,0 +1,16 @@
+name: vermelho
+alias: '&cVermelho'
+description:
+- 'The counter part to the Azul comp.'
+- 'This consists mainly of redstone'
+- 'Leaves a big &o"Hot" $4&n(Not nether)'
+- '$3impression.'
+materials:
+  - type: STONE
+    percentage: 50
+  - type: REDSTONE_ORE
+    percentage: 20
+  - type: REDSTONE_BLOCK
+    percentage: 20
+  - type: GLOWSTONE
+    percentage: 10

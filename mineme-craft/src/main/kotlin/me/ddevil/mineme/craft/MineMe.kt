@@ -19,7 +19,7 @@ import me.ddevil.shiroi.craft.plugin.AbstractPlugin
 import me.ddevil.shiroi.craft.plugin.PluginSettings
 import org.bukkit.command.CommandSender
 
-@PluginSettings(primaryAcronym = "mm", aliases = arrayOf("mrl", "mineresetlite", "validMine"))
+@PluginSettings(primaryAcronym = "mm", aliases = arrayOf("mrl", "mineresetlite", "mine"))
 class MineMe : AbstractPlugin<
         FileLangMessageManager<MineMeConfigSource, MineMeConfigValue<String>>,
         YAMLFileConfigManager<MineMeConfigSource>>() {

@@ -1,4 +1,4 @@
-package me.ddevil.mineme.craft.mine.loader
+package me.ddevil.mineme.craft.mine.factory
 
 import com.sk89q.worldedit.regions.Region
 import me.ddevil.mineme.craft.MineMe

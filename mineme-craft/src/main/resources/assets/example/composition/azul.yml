@@ -1,0 +1,17 @@
+name: azul
+alias: '&9Azul'
+description:
+- 'This composition contains mostly'
+- 'Lapis Lazuli blocks and some ice.'
+- 'The aesthetics mainly gives a'
+- '&o"Cold" $3feel. Works well with'
+- 'ice-biome based mines'
+materials:
+  - type: STONE
+    percentage: 50
+  - type: LAPIS_ORE
+    percentage: 20
+  - type: LAPIS_BLOCK
+    percentage: 20
+  - type: PACKED_ICE
+    percentage: 10

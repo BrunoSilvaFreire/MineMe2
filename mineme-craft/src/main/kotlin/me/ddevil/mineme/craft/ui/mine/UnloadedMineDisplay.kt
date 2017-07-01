@@ -36,7 +36,8 @@ private fun createUpdater(mine: MineConfig, messageManager: MessageManager): Ite
                         .setLore(listOf(
                                 "$1${mine.name}$3($2${mine.alias}$3)",
                                 "$3World: $2${mine.world}",
-                                "$3Type: $1${mine.type}"
+                                "$3Type: $1${mine.type}",
+                                "$5Click to load mine."
                         )).build()
             }
         }

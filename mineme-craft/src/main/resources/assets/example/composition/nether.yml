@@ -1,0 +1,15 @@
+name: nether
+alias: '&4Nether'
+description:
+- 'Can you already hear the ghasts crying?'
+- 'I guess this composition is pretty'
+- 'self-explanatory, nether blocks only.'
+materials:
+  - type: NETHERRACK
+    percentage: 50
+  - type: QUARTZ_ORE
+    percentage: 20
+  - type: QUARTZ_BLOCK
+    percentage: 20
+  - type: GLOWSTONE
+    percentage: 10

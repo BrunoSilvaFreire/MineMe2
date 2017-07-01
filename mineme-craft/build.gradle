@@ -2,13 +2,13 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'kotlin'
 
 dependencies {
-    println shiroi_ver
     compile "me.ddevil:shiroi-framework-craft-api:$shiroi_ver"
     compile "me.ddevil:shiroi-framework-ui-shiroi:$shiroi_ver"
     compile "com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT"
     compile group: 'minecraft', name: 'holographic-displays', version: '2.2'
     compile project(':mineme-api')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    //compile "me.clip:placeholderapi:2.0.8"
 }
 
 shadowJar {
@@ -32,4 +32,5 @@ repositories {
     mavenCentral()
     mavenLocal()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'http://repo.extendedclip.com/content/repositories/placeholderapi/' }
 }

@@ -1,0 +1,35 @@
+name: async_mine
+alias: AsyncMine
+enabled: false
+resetConfig:
+  resetDelay: 60
+  repopulator: normal
+  executor:
+    type: ASYNC
+    meta:
+      blocksPerSecond: 500
+      teleportLocation:
+        x: -3.0
+        y: 132.0
+        z: -51.0
+icon:
+  type: REDSTONE_BLOCK
+type: CUBOID
+world: world
+composition: vermelho
+region:
+  x1: -7
+  y1: 117
+  z1: -63
+  x2: 3
+  y2: 132
+  z2: -53
+holograms:
+  enabled: true
+  hologramUpdater:
+    name: sync
+    meta: {}
+  formation:
+    name: center
+    meta:
+      yOffset: 0

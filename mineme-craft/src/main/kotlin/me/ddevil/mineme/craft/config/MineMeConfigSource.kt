@@ -4,9 +4,9 @@ import me.ddevil.shiroi.craft.config.FileConfigSource
 
 
 enum class MineMeConfigSource
-constructor(override val folderPath: String, override val resourcePath: String = folderPath) : FileConfigSource {
+constructor(override val folderPath: String, override val resourcePath: String = "assets/config/$folderPath") : FileConfigSource {
     MAIN("config.yml"),
-    MESSAGES("assets/config/lang.yml"),
-    GUI("assets/config/gui.yml");
+    MESSAGES("lang.yml"),
+    GUI("gui.yml");
 
 }

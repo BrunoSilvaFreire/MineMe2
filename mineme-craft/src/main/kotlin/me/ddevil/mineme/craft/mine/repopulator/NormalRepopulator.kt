@@ -10,7 +10,7 @@ private constructor() : AbstractRepopulator(
         "Normal",
         listOf(
                 "The normal repopulator, it",
-                "repopulates the validMine based on",
+                "repopulates the mine based on",
                 "it's composition."
         )) {
 

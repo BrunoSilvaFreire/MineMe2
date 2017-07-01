@@ -26,6 +26,7 @@ class CompositionMenu(plugin: MineMe, val composition: MineComposition) : Shiroi
         "$1${composition.alias}",
         MenuSize.SIX_ROWS,
         UIResources.PRIMARY_BACKGROUND) {
+    private val menuCache = HashMap<MineMaterial, MaterialEditorMenu>()
     private var materialDisplays = UnderPanelScrollable(
             MineMaterialDisplay::class.java, this, 9, 5,
             ShiroiScrollerUpdater(Material.EMERALD, plugin),
@@ -49,10 +50,25 @@ class CompositionMenu(plugin: MineMe, val composition: MineComposition) : Shiroi
         for (material in composition.compositionMap) {
             val display = MineMaterialDisplay(composition, material, plugin.messageManager, object : Action {
                 override fun invoke(p1: UIClickEvent, p2: UIPosition) {
-                    composition.remove(material)
+                    getMenu(material)?.open(p1.player)
                 }
             })
             materialDisplays.add(display)
+        }
+    }
+
+    private fun getMenu(material: MineMaterial): MaterialEditorMenu? {
+        if (material !in composition) {
+            val menu = menuCache.remove(material)
+            if (menu != null) {
+                plugin.unregisterListener(menu)
+            }
+            return null
+        }
+        return menuCache.getOrPut(material) {
+            val menu = MaterialEditorMenu(plugin, this, material)
+            menu.register()
+            return menu
         }
     }
 }

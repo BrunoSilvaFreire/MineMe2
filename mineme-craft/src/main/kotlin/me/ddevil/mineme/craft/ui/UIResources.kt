@@ -41,6 +41,8 @@ object UIResources {
         private set
     lateinit var INVALID_CONFIG_ICON: ItemStack
         private set
+    lateinit var DEFAULT_MATERIAL_ICON: ItemStack
+        private set
 
     fun loadItems(configManager: YAMLFileConfigManager<MineMeConfigSource>, messageManager: MessageManager) {
         this.PRIMARY_BACKGROUND = parseConfig(configManager.getValue(Keys.PRIMARY_BACKGROUND), messageManager)
@@ -57,6 +59,7 @@ object UIResources {
         this.CHANGE_COMPOSITION_BUTTON = parseConfig(configManager.getValue(Keys.CHANGE_COMPOSITION_BUTTON),
                 messageManager)
         this.INVALID_CONFIG_ICON = parseConfig(configManager.getValue(Keys.INVALID_CONFIG_ICON), messageManager)
+        this.DEFAULT_MATERIAL_ICON = parseConfig(configManager.getValue(Keys.DEFAULT_MATERIAL_ICON), messageManager)
     }
 
     object Keys {
@@ -79,7 +82,7 @@ object UIResources {
         val TELEPORT_BUTTON = MineMeConfigValue(
                 createConfig {
                     this[MATERIAL_TYPE_IDENTIFIER] = Material.ENDER_PEARL.name
-                    this[DEFAULT_NAME_IDENTIFIER] = "$2Teleport to validMine location!"
+                    this[DEFAULT_NAME_IDENTIFIER] = "$2Teleport to mine location!"
                 },
                 MineMeConfigSource.GUI,
                 "resources.teleportButton"
@@ -87,10 +90,10 @@ object UIResources {
         val RESET_BUTTON = MineMeConfigValue(
                 createConfig {
                     this[MATERIAL_TYPE_IDENTIFIER] = Material.IRON_PICKAXE.name
-                    this[DEFAULT_NAME_IDENTIFIER] = "$2Resets the validMine!"
+                    this[DEFAULT_NAME_IDENTIFIER] = "$2Resets the mine!"
                     this[DEFAULT_SHIROI_ITEM_LORE_IDENTIFIER] = listOf(
-                            "$3Uses the default validMine repopulator",
-                            "$3and executor to reset the validMine."
+                            "$3Uses the default mine repopulator",
+                            "$3and executor to reset the mine."
                     )
                 },
                 MineMeConfigSource.GUI,
@@ -100,7 +103,7 @@ object UIResources {
         val CLEAR_BUTTON = MineMeConfigValue(
                 createConfig {
                     this[MATERIAL_TYPE_IDENTIFIER] = Material.IRON_PICKAXE.name
-                    this[DEFAULT_NAME_IDENTIFIER] = "$2Clears the validMine!"
+                    this[DEFAULT_NAME_IDENTIFIER] = "$2Clears the mine!"
                 },
                 MineMeConfigSource.GUI,
                 "resources.clearButton"
@@ -126,9 +129,9 @@ object UIResources {
                     this[MATERIAL_TYPE_IDENTIFIER] = Material.REDSTONE_TORCH_ON.name
                     this[DEFAULT_NAME_IDENTIFIER] = "$4Disable Mine"
                     this[DEFAULT_SHIROI_ITEM_LORE_IDENTIFIER] = listOf(
-                            "$4This unloads the validMine and prevents ",
+                            "$4This unloads the mine and prevents ",
                             "$4it from being loaded in the next start-ups.",
-                            "$4The validMine can be re-enabled through it's config"
+                            "$4The mine can be re-enabled through it's config"
                     )
                 },
                 MineMeConfigSource.GUI,
@@ -139,7 +142,7 @@ object UIResources {
                     this[MATERIAL_TYPE_IDENTIFIER] = Material.TNT.name
                     this[DEFAULT_NAME_IDENTIFIER] = "$4Delete Mine"
                     this[DEFAULT_SHIROI_ITEM_LORE_IDENTIFIER] = listOf(
-                            "$4This deletes the validMine permanently.",
+                            "$4This deletes the mine permanently.",
                             "$4This is not reversible."
                     )
                 },
@@ -152,7 +155,7 @@ object UIResources {
                     this[DEFAULT_SHIROI_ITEM_DATA_IDENTIFIER] = 1
                     this[DEFAULT_NAME_IDENTIFIER] = "$4Pause Mine Countdown"
                     this[DEFAULT_SHIROI_ITEM_LORE_IDENTIFIER] = listOf(
-                            "$3This pauses the validMine's reset countdown.",
+                            "$3This pauses the mine's reset countdown.",
                             "$3The countdown can be resumed again by",
                             "$3pressing this button again."
                     )
@@ -166,7 +169,7 @@ object UIResources {
                     this[DEFAULT_SHIROI_ITEM_DATA_IDENTIFIER] = 10
                     this[DEFAULT_NAME_IDENTIFIER] = "$5Resume Mine Countdown"
                     this[DEFAULT_SHIROI_ITEM_LORE_IDENTIFIER] = listOf(
-                            "$3This resumes the validMine's reset countdown.",
+                            "$3This resumes the mine's reset countdown.",
                             "$3The countdown can be again by",
                             "$3pressing this button again."
                     )
@@ -179,19 +182,27 @@ object UIResources {
                     this[MATERIAL_TYPE_IDENTIFIER] = Material.DIAMOND_BLOCK.name
                     this[DEFAULT_NAME_IDENTIFIER] = "$1Change Composition"
                     this[DEFAULT_SHIROI_ITEM_LORE_IDENTIFIER] = listOf(
-                            "$3Opens a menu to change this validMine's composition"
+                            "$3Opens a menu to change this mine's composition"
                     )
                 },
                 MineMeConfigSource.GUI,
                 "resources.changeComposition"
         )
-        val  INVALID_CONFIG_ICON= MineMeConfigValue(
+        val INVALID_CONFIG_ICON = MineMeConfigValue(
                 createConfig {
                     this[MATERIAL_TYPE_IDENTIFIER] = Material.BARRIER.name
                     this[DEFAULT_NAME_IDENTIFIER] = "$4Invalid config"
                 },
                 MineMeConfigSource.GUI,
                 "resources.invalidConfig"
+        )
+        val DEFAULT_MATERIAL_ICON = MineMeConfigValue(
+                createConfig {
+                    this[MATERIAL_TYPE_IDENTIFIER] = Material.STONE.name
+                    this[DEFAULT_NAME_IDENTIFIER] = "$4Default Material, YAY"
+                },
+                MineMeConfigSource.GUI,
+                "resources.defaultMaterialIcon"
         )
     }
 

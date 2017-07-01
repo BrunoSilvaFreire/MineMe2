@@ -1,10 +1,11 @@
 package me.ddevil.mineme.api.composition
 
-import com.google.common.collect.ImmutableMap
 import me.ddevil.mineme.api.MineMeConstants
 import me.ddevil.shiroi.util.misc.item.Item
 import me.ddevil.shiroi.util.misc.item.Material
 import me.ddevil.util.getDouble
+import me.ddevil.util.immutableMap
+import me.ddevil.util.set
 import java.text.DecimalFormat
 
 class MineMaterial : Item, Comparable<MineMaterial> {
@@ -54,17 +55,17 @@ class MineMaterial : Item, Comparable<MineMaterial> {
     }
 
     constructor(map: Map<String, Any>) : super(map) {
-        this.percentage = map.getDouble(MineMeConstants.MINE_MATERIAL_PERCENTAGE_MODIFIER)
+        this.percentage = map.getDouble(MineMeConstants.MINE_MATERIAL_PERCENTAGE_IDENTIFIER)
     }
 
     override fun compareTo(other: MineMaterial) = percentage.compareTo(other.percentage)
 
-    override fun serialize(): Map<String, Any> = ImmutableMap.builder<String, Any>()
-            .putAll(super.serialize())
-            .put(MineMeConstants.MINE_MATERIAL_PERCENTAGE_MODIFIER, percentage)
-            .build()
+    override fun serialize(): Map<String, Any> = immutableMap {
+        putAll(super.serialize())
+        this[MineMeConstants.MINE_MATERIAL_PERCENTAGE_IDENTIFIER] = percentage
+    }
 
     fun toColorizedString(decimalFormat: DecimalFormat) = "$1$material$3:$2$data$3=$5${decimalFormat.format(percentage)}$3%"
 
-    fun toColorizedString() = "$1$material$3:$2$data$3=$5$percentage$3%"
 }
+

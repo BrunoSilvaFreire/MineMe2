@@ -4,7 +4,6 @@ import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.craft.api.mine.Mine
 import me.ddevil.mineme.craft.message.MineMeLang
 import me.ddevil.mineme.craft.ui.UIResources
-import me.ddevil.mineme.craft.util.exportMessageVariables
 import me.ddevil.shiroi.ui.api.UIPosition
 import me.ddevil.shiroi.ui.api.component.BackButton
 import me.ddevil.shiroi.ui.api.component.CloseButton
@@ -52,7 +51,7 @@ constructor(plugin: MineMe, val mine: Mine)
                         plugin.messageManager.sendMessage(
                                 e.player,
                                 MineMeLang.COMMAND_RESET_MINE_SUCCESS,
-                                *mine.exportMessageVariables()
+                                *mine.exportVariables()
 
                         )
                     }
@@ -66,7 +65,7 @@ constructor(plugin: MineMe, val mine: Mine)
                         plugin.messageManager.sendMessage(
                                 e.player,
                                 MineMeLang.COMMAND_CLEAR_MINE_SUCCESS,
-                                *mine.exportMessageVariables()
+                                *mine.exportVariables()
 
                         )
                     }
@@ -81,7 +80,7 @@ constructor(plugin: MineMe, val mine: Mine)
                         player.closeInventory()
                         plugin.messageManager.sendMessage(player,
                                 MineMeLang.MINE_DISABLED,
-                                *mine.exportMessageVariables())
+                                *mine.exportVariables())
 
                     }
                 }
@@ -95,7 +94,7 @@ constructor(plugin: MineMe, val mine: Mine)
                         player.closeInventory()
                         plugin.messageManager.sendMessage(player,
                                 MineMeLang.MINE_DELETED,
-                                *mine.exportMessageVariables())
+                                *mine.exportVariables())
                     }
                 }
         ), 1, 1)

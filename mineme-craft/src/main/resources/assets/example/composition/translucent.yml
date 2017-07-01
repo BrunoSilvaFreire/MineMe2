@@ -1,0 +1,14 @@
+name: translucent
+alias: Translucent
+description:
+- 'You can see right throught it'
+- 'Just like you when you''re talking'
+- 'about that girl.'
+materials:
+  - type: GLASS
+    percentage: 99.4
+  - type: DIAMOND_ORE
+    percentage: 0.5
+  - type: DIAMOND_BLOCK
+    percentage: 0.1
+  

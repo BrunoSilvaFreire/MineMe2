@@ -1,0 +1,40 @@
+name: sunshine
+alias: '&aSunshine &band &dRainbows'
+description:
+- 'Ever been to a Brazilian carnival?'
+- 'No?'
+- 'Well, you can just use this composition'
+- 'and you''ll have the same experience.'
+- 'Except you won''t have to run to the'
+- 'hospital the next day, which is nice.'
+materials:
+  - type: WOOL
+    data: 0
+    percentage: 10
+  - type: WOOL
+    data: 1
+    percentage: 10
+  - type: WOOL
+    data: 2
+    percentage: 10
+  - type: WOOL
+    data: 3
+    percentage: 10
+  - type: WOOL
+    data: 4
+    percentage: 10
+  - type: WOOL
+    data: 5
+    percentage: 10
+  - type: WOOL
+    data: 6
+    percentage: 10
+  - type: WOOL
+    data: 9
+    percentage: 10
+  - type: WOOL
+    data: 10
+    percentage: 10
+  - type: WOOL
+    data: 11
+    percentage: 10

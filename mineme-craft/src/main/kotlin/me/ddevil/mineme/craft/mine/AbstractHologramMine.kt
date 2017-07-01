@@ -11,7 +11,6 @@ import me.ddevil.mineme.craft.api.mine.HologramMine
 import me.ddevil.mineme.craft.api.mine.MineRepopulator
 import me.ddevil.mineme.craft.config.MineMeConfigValue
 import me.ddevil.mineme.craft.hologram.misc.HologramConfig
-import me.ddevil.mineme.craft.util.exportMessageVariables
 import me.ddevil.shiroi.craft.log.DebugLevel
 import me.ddevil.shiroi.craft.misc.variable.translateVariables
 import me.ddevil.util.getMapAnyOrNull
@@ -33,7 +32,7 @@ abstract class AbstractHologramMine<R : Region> : AbstractMine<R>, HologramMine 
         set(value) {
             internalHolograms.forEach { it.delete() }
             internalHolograms.clear()
-            if (value != null) {
+            if (plugin.hologramManager.hasHandler) {
                 internalHolograms.addAll(value.createHolograms(this))
             }
             field = value
@@ -48,14 +47,9 @@ abstract class AbstractHologramMine<R : Region> : AbstractMine<R>, HologramMine 
         set(value) {
             if (value != field) {
                 field = value
-                updateHolograms()
             }
         }
     override var customHologramText: List<String>
-        set(value) {
-            field = value
-            updateHolograms()
-        }
 
     override val hologramText get() = if (useCustomHologramText) {
         customHologramText
@@ -77,7 +71,7 @@ abstract class AbstractHologramMine<R : Region> : AbstractMine<R>, HologramMine 
     override fun updateHolograms() {
         for (hologram in holograms) {
             val lines = plugin.messageManager.translateAll(hologramText).map {
-                translateVariables(it, *exportMessageVariables())
+                translateVariables(it, *exportVariables())
             }
             hologram.setLines(lines)
         }
@@ -99,12 +93,11 @@ abstract class AbstractHologramMine<R : Region> : AbstractMine<R>, HologramMine 
         this.internalHolograms = HashSet()
 
         this.formation = formation ?: plugin.hologramManager.createDefaultFormation(this)
-        internalHolograms.addAll(this.formation.createHolograms(this))
-        hologramsEnabled = false
+        this.internalHolograms.addAll(this.formation.createHolograms(this))
+        this.hologramsEnabled = false
         this.useCustomHologramText = useCustomHologramText
         this.customHologramText = customHologramText
         this.internalUpdater = plugin.hologramManager.createDefaultUpdater(this)
-        updateHolograms()
     }
 
     constructor(plugin: MineMe, map: Map<String, Any>) : super(plugin, map) {
@@ -139,8 +132,8 @@ abstract class AbstractHologramMine<R : Region> : AbstractMine<R>, HologramMine 
                         formation = tempFormation.loadFormation(this, formationMeta)
                     } else {
                         plugin.pluginLogger.log(
-                                "Couldn't find hologram formation '$formationName' while loading validMine" +
-                                        " '$name', holograms will be disabled, please fix this validMine's formation!",
+                                "Couldn't find hologram formation '$formationName' while loading mine" +
+                                        " '$name', holograms will be disabled, please fix this mine's formation!",
                                 DebugLevel.FUCK_MAN_SOUND_THE_ALARMS)
                         formation = hologramManager.createDefaultFormation(this)
                     }
@@ -154,7 +147,6 @@ abstract class AbstractHologramMine<R : Region> : AbstractMine<R>, HologramMine 
         this.internalUpdater = updater
 
         this.internalHolograms.addAll(formation.createHolograms(this))
-        updateHolograms()
     }
 
     override fun enable() {

@@ -38,7 +38,7 @@ class CenterHologramFormation : AbstractHologramFormation {
     companion object {
         const val NAME = "center"
         const val ALIAS = "Center"
-        val DESCRIPTION = listOf("Creates a single hologram on the top of the validMine.")
+        val DESCRIPTION = listOf("Creates a single hologram on the top of the mine.")
         const val Y_OFFSET_KEY = "yOffset"
     }
 

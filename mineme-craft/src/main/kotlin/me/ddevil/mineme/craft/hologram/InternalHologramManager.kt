@@ -28,6 +28,8 @@ constructor(val plugin: MineMe) : HologramManager {
     private var handler: HologramHandler?
     private val formationFactories: MutableSet<HologramFormationFactory>
     private var updaterFactories: MutableList<HologramUpdaterFactory>
+    override val hasHandler: Boolean
+        get() = handler != null
 
     init {
         this.formationFactories = HashSet()
@@ -53,6 +55,7 @@ constructor(val plugin: MineMe) : HologramManager {
         registerDefaultFormations()
         registerDefaultUpdaterLoaders()
     }
+
     override fun createDefaultFormation(mine: HologramMine) = CenterHologramFormation(this)
     private fun registerDefaultUpdaterLoaders() {
         registerUpdaterLoader(SyncHologramUpdaterFactory(plugin))
@@ -70,7 +73,7 @@ constructor(val plugin: MineMe) : HologramManager {
     override fun getFormationLoader(string: String) = formationFactories.firstOrNull { it.formationName == string }
 
     override fun createHologram(location: Location): Hologram {
-        val h = handler ?: throw IllegalStateException("There is no hologram, handler defined")
+        val h = handler ?: throw IllegalStateException("There is no hologram handler defined")
         val holo = h.create(location)
         return holo
     }

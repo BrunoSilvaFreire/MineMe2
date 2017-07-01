@@ -2,6 +2,7 @@ package me.ddevil.mineme.craft.api.mine
 
 import me.ddevil.mineme.api.composition.MineComposition
 import me.ddevil.mineme.craft.api.mine.executor.MineResetExecutor
+import me.ddevil.shiroi.craft.misc.variable.VariableProvider
 import me.ddevil.shiroi.util.misc.Toggleable
 import me.ddevil.util.Serializable
 import me.ddevil.util.misc.Nameable
@@ -15,7 +16,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import java.io.File
 
-interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable, Listener {
+interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable, Listener, VariableProvider {
     //<editor-fold desc="General" defaultstate="collapsed">
     var icon: ItemStack
 
@@ -32,26 +33,26 @@ interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable, Listener {
     fun unload()
 
     /**
-     * Resets the validMine
+     * Resets the mine
      */
     fun reset()
 
     /**
-     * Resets the validMine with the given [repopulator]
+     * Resets the mine with the given [repopulator]
 
      * @param repopulator
      */
     fun reset(repopulator: MineRepopulator)
 
     /**
-     * Resets the validMine with the given [repopulator] and [executor]
+     * Resets the mine with the given [repopulator] and [executor]
 
      * @param repopulator
      */
     fun reset(repopulator: MineRepopulator, executor: MineResetExecutor)
 
     /**
-     * Resets the validMine with the given [executor]
+     * Resets the mine with the given [executor]
      * @param executor
      */
     fun reset(executor: MineResetExecutor)
@@ -62,7 +63,7 @@ interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable, Listener {
     fun fill(item: ItemStack)
 
     /**
-     * Will remove all the blocks (not material) inside this validMine, if
+     * Will remove all the blocks (not material) inside this mine, if
      * you wish to remove the material, use [.clearMaterials] instead!
      */
     fun clear()

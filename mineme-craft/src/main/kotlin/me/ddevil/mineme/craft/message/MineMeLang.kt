@@ -70,6 +70,7 @@ object MineMeLang {
     val UNABLE_TO_LOAD_MINE = Lang(Keys.UNABLE_TO_LOAD_MINE)
 
     val MINE_COMPOSITION_CHANGED = Lang(Keys.MINE_COMPOSITION_CHANGED)
+    val MATERIAL_EDITOR_MENU_TITLE = Lang(Keys.MATERIAL_EDITOR_MENU_TITLE)
 
     object Keys {
 
@@ -240,10 +241,15 @@ object MineMeLang {
                 MineMeConfigSource.MESSAGES,
                 "mine.unableToLoad"
         )
-        val  MINE_COMPOSITION_CHANGED = MineMeConfigValue(
+        val MINE_COMPOSITION_CHANGED = MineMeConfigValue(
                 "$3Mine composition changed to $1{alias} $3($2{name}$3).",
                 MineMeConfigSource.MESSAGES,
                 "mine.compositionChanged"
+        )
+        val MATERIAL_EDITOR_MENU_TITLE = MineMeConfigValue(
+                "$1Material Editor",
+                MineMeConfigSource.MESSAGES,
+                "ui.materialEditor.title"
         )
 
     }

@@ -28,7 +28,7 @@ object MineMeConstants {
     const val MINE_EXECUTOR_CONFIG_IDENTIFIER = "executor"
     const val MINE_EXECUTOR_TYPE_IDENTIFIER = "type"
     const val MINE_EXECUTOR_META_IDENTIFIER = "meta"
-    const val MINE_MATERIAL_PERCENTAGE_MODIFIER = "percentage"
+    const val MINE_MATERIAL_PERCENTAGE_IDENTIFIER = "percentage"
 
     const val MINE_USE_CUSTOM_HOLOGRAM_TEXT_IDENTIFIER = "useCustomHologramText"
     const val MINE_CUSTOM_HOLOGRAM_TEXT_IDENTIFIER = "customHologramText"

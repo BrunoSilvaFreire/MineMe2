@@ -1,6 +1,6 @@
 command:
   list:
-    validMine:
+    mine:
       empty: $4There are no mines loaded!
       header: '$3Found mines:'
       found: $1{name} $3($2{alias}$3, &d{type}) $3@ $1{world}
@@ -12,22 +12,22 @@ command:
       nameRequired: $4You need to provide a name for the composition!
       aliasRequired: $4You need to provide an alias for the composition!
       success: $3Composition $5{name} $3successfully created!
-    validMine:
+    mine:
       worldEdit:
         selectionRequired: $4You need to have a world edit selection!
-      nameRequired: $4You need to provide a name for the validMine!
-      aliasRequired: $4You need to provide an alias for the validMine!
-      compositionRequired: $4You need to provide a composition for the validMine!
+      nameRequired: $4You need to provide a name for the mine!
+      aliasRequired: $4You need to provide an alias for the mine!
+      compositionRequired: $4You need to provide a composition for the mine!
       success: $3Mine $5{name} $3successfully created! (&d{type}$3)
   reset:
-    nameRequired: $4You must provide a validMine!
-    notFound: $4Couldn't find a validMine with name $1{name}$4!
-    resetAllMines: $5Successfully $3reset validMine $1{alias} $3($2{name}$3)!
-    resetMine: $5Successfully reset validMine $1{alias} $3($2{name}$3)!
+    nameRequired: $4You must provide a mine!
+    notFound: $4Couldn't find a mine with name $1{name}$4!
+    resetAllMines: $5Successfully $3reset mine $1{alias} $3($2{name}$3)!
+    resetMine: $5Successfully reset mine $1{alias} $3($2{name}$3)!
   clear:
-    clearedMine: The validMine $1{name} $3has been successfully cleared!
+    clearedMine: The mine $1{name} $3has been successfully cleared!
     clearedAllMines: $5Successfully cleared all mines!
-    nameRequired: $4You must provide a validMine!
+    nameRequired: $4You must provide a mine!
   info:
   - 'name: $1{name}'
   - 'alias: $1{alias}'
@@ -40,9 +40,9 @@ command:
   - 'resetTimePassed: $1{resetTimePassed}'
   - 'totalResetTime: $1{totalResetTime}'
   - 'resetTimeLeft: $1{resetTimeLeft}'
-validMine:
+mine:
   disabled: Mine $1{name} $3was $5successfully disabled$3!
   deleted: Mine $1{name} $3was $5successfully deleted$3!
 ui:
-  validMine:
-    compositionSelectorTitle: $3Select a composition for validMine $1{name}$3.
+  mine:
+    compositionSelectorTitle: $3Select a composition for mine $1{name}$3.

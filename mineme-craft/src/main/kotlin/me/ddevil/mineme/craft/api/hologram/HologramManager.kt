@@ -9,6 +9,8 @@ import org.bukkit.Location
 
 interface HologramManager {
 
+    val hasHandler: Boolean
+
     fun createHologram(location: Location): Hologram
 
     fun createDefaultFormation(mine: HologramMine): HologramFormation
@@ -19,7 +21,7 @@ interface HologramManager {
 
     fun createDefaultUpdater(mine: HologramMine): HologramUpdater
 
-    fun loadUpdater(mine: HologramMine,serializedUpdater: Map<String, Any>, updaterName: String): HologramUpdater
+    fun loadUpdater(mine: HologramMine, serializedUpdater: Map<String, Any>, updaterName: String): HologramUpdater
 
     fun registerUpdaterLoader(factory: HologramUpdaterFactory)
 
