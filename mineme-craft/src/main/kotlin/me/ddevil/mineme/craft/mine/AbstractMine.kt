@@ -25,7 +25,7 @@ import me.ddevil.shiroi.craft.util.toBukkit
 import me.ddevil.shiroi.craft.util.toShiroiStack
 import me.ddevil.shiroi.craft.util.toVector3
 import me.ddevil.util.*
-import me.ddevil.util.vector.Vector3
+import me.ddevil.util.math.vector.Vector3
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
@@ -321,7 +321,7 @@ abstract class AbstractMine<R : Region> : Mine {
         saveTo(file, plugin)
     }
 
-    override fun exportVariables() = arrayOf(
+    override fun provide() = arrayOf(
             MessageVariable(MineMeConstants.MINE_NAME_IDENTIFIER, name),
             MessageVariable(MineMeConstants.MINE_ALIAS_IDENTIFIER, alias),
             MessageVariable(MineMeConstants.MINE_TYPE_IDENTIFIER, type.toString()),

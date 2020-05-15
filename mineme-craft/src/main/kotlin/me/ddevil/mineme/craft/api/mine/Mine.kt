@@ -2,11 +2,12 @@ package me.ddevil.mineme.craft.api.mine
 
 import me.ddevil.mineme.api.composition.MineComposition
 import me.ddevil.mineme.craft.api.mine.executor.MineResetExecutor
+import me.ddevil.shiroi.craft.misc.variable.MessageVariable
 import me.ddevil.shiroi.craft.misc.variable.VariableProvider
 import me.ddevil.shiroi.util.misc.Toggleable
 import me.ddevil.util.Serializable
 import me.ddevil.util.misc.Nameable
-import me.ddevil.util.vector.Vector3
+import me.ddevil.util.math.vector.Vector3
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.block.Block
@@ -114,7 +115,6 @@ interface Mine : Nameable, Iterable<Block>, Serializable, Toggleable, Listener, 
     operator fun contains(vector: Vector3<*>): Boolean
 
     //</editor-fold>
-
     fun save()
 }
 

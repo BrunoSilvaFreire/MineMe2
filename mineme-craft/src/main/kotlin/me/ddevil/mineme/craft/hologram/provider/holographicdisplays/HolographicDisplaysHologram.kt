@@ -1,7 +1,5 @@
 package me.ddevil.mineme.craft.hologram.provider.holographicdisplays
 
-import com.gmail.filoghost.holographicdisplays.`object`.CraftHologram
-import com.gmail.filoghost.holographicdisplays.`object`.line.CraftTextLine
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI
 import me.ddevil.mineme.craft.MineMe
 import me.ddevil.mineme.craft.api.hologram.Hologram
@@ -12,20 +10,16 @@ class HolographicDisplaysHologram : Hologram {
     override var location: Location
         get() = holo.location
         set(value) {
-            holo.teleport(value)
+            holo.location = value
         }
     override var visible: Boolean
-        get() = holo.visibilityManager.isVisibleByDefault
+        get() = holo.visible
         set(value) {
-            holo.visibilityManager.isVisibleByDefault = value
+            holo.visible = value
         }
 
     override fun setLines(hologramText: List<String>) {
-        holo.ensureLines(hologramText.size)
-        for ((index, text) in hologramText.withIndex()) {
-            val line = holo.getLine(index)
-            (line as CraftTextLine).text = text
-        }
+        holo.setLines(hologramText)
     }
 
     override fun delete() {
@@ -33,10 +27,10 @@ class HolographicDisplaysHologram : Hologram {
     }
 
 
-    private var holo: CraftHologram
+    private var holo: Hologram
 
     constructor(plugin: MineMe, location: Location) {
-        this.holo = HologramsAPI.createHologram(plugin, location) as CraftHologram
+        this.holo = HologramsAPI.createHologram(plugin, location) as Hologram
     }
 
 }

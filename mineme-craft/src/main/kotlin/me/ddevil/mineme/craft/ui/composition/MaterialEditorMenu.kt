@@ -7,14 +7,13 @@ import me.ddevil.mineme.craft.config.MineMeConfigSource
 import me.ddevil.mineme.craft.config.MineMeConfigValue
 import me.ddevil.mineme.craft.message.MineMeLang
 import me.ddevil.mineme.craft.ui.UIResources
-import me.ddevil.mineme.craft.util.exportVariables
+import me.ddevil.mineme.craft.util.provide
 import me.ddevil.shiroi.craft.misc.variable.MessageVariable
 import me.ddevil.shiroi.craft.misc.variable.translateVariables
 import me.ddevil.shiroi.craft.util.ShiroiItemBuilder
 import me.ddevil.shiroi.craft.util.toBukkit
 import me.ddevil.shiroi.ui.api.component.BackButton
 import me.ddevil.shiroi.ui.api.component.container.MenuSize
-import me.ddevil.shiroi.ui.api.component.misc.value.AreaValueModifier
 import me.ddevil.shiroi.ui.api.component.misc.value.ValueModifierUpdater
 import me.ddevil.shiroi.ui.shiroi.FileLangShiroiMenu
 import org.bukkit.inventory.ItemStack
@@ -27,7 +26,7 @@ class MaterialEditorMenu(plugin: MineMe,
         MenuSize.SIX_ROWS,
         UIResources.PRIMARY_BACKGROUND) {
 
-    val percentModifier = AreaValueModifier(
+    /*val percentModifier = AreaValueModifier(
             7, 2, {
         a, b ->
         //Value selectors
@@ -57,7 +56,7 @@ class MaterialEditorMenu(plugin: MineMe,
     }, object : ValueModifierUpdater<Double> {
         fun name(double: Double) = translateVariables(
                 plugin.configManager.getValue(MineMeConfigValue.MATERIAL_ICON_NAME),
-                *(material.exportVariables() + MessageVariable("value", serializeValue(double)))
+                *(material.provide() + MessageVariable("value", serializeValue(double)))
         )
 
         private fun serializeValue(value: Double): String {
@@ -71,7 +70,7 @@ class MaterialEditorMenu(plugin: MineMe,
 
         fun lore(double: Double) = translateVariables(
                 plugin.configManager.getValue(MineMeConfigValue.MATERIAL_ICON_LORE),
-                *(material.exportVariables() + MessageVariable("value",  serializeValue(double)))
+                *(material.provide() + MessageVariable("value",  serializeValue(double)))
 
         )
 
@@ -83,9 +82,9 @@ class MaterialEditorMenu(plugin: MineMe,
                     .build()
         }
     }, UIResources.DEFAULT_MATERIAL_ICON, UIResources.SECONDARY_BACKGROUND)
-
+*/
     init {
-        place(percentModifier, 1, 1)
+//        place(percentModifier, 1, 1)
         place(BackButton(UIResources.BACK_BUTTON, menu), 0, 5)
     }
 }

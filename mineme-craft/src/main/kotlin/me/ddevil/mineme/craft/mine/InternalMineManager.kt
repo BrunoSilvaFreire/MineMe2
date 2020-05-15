@@ -25,7 +25,6 @@ import me.ddevil.shiroi.craft.util.parseConfig
 import me.ddevil.shiroi.craft.util.toMap
 import me.ddevil.util.Serializable
 import me.ddevil.util.getList
-import me.ddevil.util.isEmpty
 import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.event.EventHandler
@@ -70,14 +69,14 @@ class InternalMineManager(val plugin: MineMe) : MineManager, Listener {
             minesFolder.mkdirs()
         }
         val loadExamples = plugin.configManager.getValue(MineMeConfigValue.LOAD_EXAMPLES)
-        if (loadExamples && minesFolder.isEmpty()) {
+        if (loadExamples && minesFolder.list().isNullOrEmpty()) {
             unloadExampleMines()
         }
         this.compositionsFolder = File(plugin.dataFolder, MineMeConstants.COMPOSITION_FOLDER_NAME)
         if (!compositionsFolder.exists()) {
             compositionsFolder.mkdirs()
         }
-        if (loadExamples && compositionsFolder.isEmpty()) {
+        if (loadExamples && compositionsFolder.list().isNullOrEmpty()) {
             unloadExampleCompositions()
         }
         this.defaultExecutor = MineResetExecutorType.getType(plugin.configManager.getValue(MineMeConfigValue.DEFAULT_MINE_RESET_EXECUTOR))

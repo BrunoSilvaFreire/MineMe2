@@ -39,7 +39,6 @@ constructor(plugin: MineMe, val mine: Mine)
                     override fun invoke(e: UIClickEvent, localPosition: UIPosition) {
                         e.player.teleport(mine.topCenter)
                     }
-
                 }
         ), 0, 0)
 
@@ -51,7 +50,7 @@ constructor(plugin: MineMe, val mine: Mine)
                         plugin.messageManager.sendMessage(
                                 e.player,
                                 MineMeLang.COMMAND_RESET_MINE_SUCCESS,
-                                *mine.exportVariables()
+                                *mine.provide()
 
                         )
                     }
@@ -65,7 +64,7 @@ constructor(plugin: MineMe, val mine: Mine)
                         plugin.messageManager.sendMessage(
                                 e.player,
                                 MineMeLang.COMMAND_CLEAR_MINE_SUCCESS,
-                                *mine.exportVariables()
+                                *mine.provide()
 
                         )
                     }
@@ -80,7 +79,7 @@ constructor(plugin: MineMe, val mine: Mine)
                         player.closeInventory()
                         plugin.messageManager.sendMessage(player,
                                 MineMeLang.MINE_DISABLED,
-                                *mine.exportVariables())
+                                *mine.provide())
 
                     }
                 }
@@ -94,7 +93,7 @@ constructor(plugin: MineMe, val mine: Mine)
                         player.closeInventory()
                         plugin.messageManager.sendMessage(player,
                                 MineMeLang.MINE_DELETED,
-                                *mine.exportVariables())
+                                *mine.provide())
                     }
                 }
         ), 1, 1)

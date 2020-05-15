@@ -12,7 +12,7 @@ fun MineMaterial.toItemStack(): ItemStack {
     return ItemStack(material.toBukkit(), 1, data.toShort())
 }
 
-fun MineMaterial.exportVariables() = arrayOf(
+fun MineMaterial.provide() = arrayOf(
         MessageVariable(MineMeConstants.MINE_MATERIAL_PERCENTAGE_IDENTIFIER, percentage.toString()),
         MessageVariable(DEFAULT_SHIROI_ITEM_TYPE_IDENTIFIER, material.name),
         MessageVariable(DEFAULT_SHIROI_ITEM_DATA_IDENTIFIER, data.toString())

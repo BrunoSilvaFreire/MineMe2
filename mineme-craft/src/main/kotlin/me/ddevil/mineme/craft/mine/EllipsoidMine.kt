@@ -13,7 +13,7 @@ import me.ddevil.mineme.craft.util.toWE
 import me.ddevil.util.getMap
 import me.ddevil.util.immutableMap
 import me.ddevil.util.set
-import me.ddevil.util.vector.DoubleVector3
+import me.ddevil.util.math.vector.DoubleVector3
 import org.bukkit.inventory.ItemStack
 
 class EllipsoidMine : AbstractHologramMine<EllipsoidRegion> {

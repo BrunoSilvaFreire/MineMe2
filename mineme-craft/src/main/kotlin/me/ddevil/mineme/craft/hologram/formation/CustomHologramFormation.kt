@@ -7,8 +7,8 @@ import me.ddevil.shiroi.craft.util.toLocation
 import me.ddevil.util.getList
 import me.ddevil.util.immutableMap
 import me.ddevil.util.set
-import me.ddevil.util.vector.DoubleVector3
-import me.ddevil.util.vector.Vector3
+import me.ddevil.util.math.vector.DoubleVector3
+import me.ddevil.util.math.vector.Vector3
 
 class CustomHologramFormation : AbstractHologramFormation {
 

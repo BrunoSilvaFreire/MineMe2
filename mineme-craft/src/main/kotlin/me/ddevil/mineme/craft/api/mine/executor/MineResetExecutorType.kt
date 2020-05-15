@@ -6,7 +6,7 @@ import me.ddevil.mineme.craft.api.mine.Mine
 import me.ddevil.shiroi.craft.util.toLocation
 import me.ddevil.util.getMapAny
 import me.ddevil.util.getOrException
-import me.ddevil.util.vector.DoubleVector3
+import me.ddevil.util.math.vector.DoubleVector3
 
 enum class MineResetExecutorType {
     SYNC {

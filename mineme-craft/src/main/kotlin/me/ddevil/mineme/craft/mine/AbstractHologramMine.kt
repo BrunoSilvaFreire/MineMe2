@@ -71,7 +71,7 @@ abstract class AbstractHologramMine<R : Region> : AbstractMine<R>, HologramMine 
     override fun updateHolograms() {
         for (hologram in holograms) {
             val lines = plugin.messageManager.translateAll(hologramText).map {
-                translateVariables(it, *exportVariables())
+                translateVariables(it, *provide())
             }
             hologram.setLines(lines)
         }

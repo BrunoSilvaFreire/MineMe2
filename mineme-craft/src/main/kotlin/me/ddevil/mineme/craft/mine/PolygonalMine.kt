@@ -14,7 +14,7 @@ import me.ddevil.util.getInt
 import me.ddevil.util.getList
 import me.ddevil.util.immutableMap
 import me.ddevil.util.set
-import me.ddevil.util.vector.IntVector2
+import me.ddevil.util.math.vector.IntVector2
 import org.bukkit.inventory.ItemStack
 
 class PolygonalMine : AbstractHologramMine<Polygonal2DRegion> {

@@ -34,7 +34,7 @@ class GeneralCommands(plugin: MineMe) : MineMeCommand(plugin) {
             plugin.messageManager.sendMessage(
                     sender,
                     MineMeLang.COMMAND_RESET_MINE_SUCCESS,
-                    *mine.exportVariables()
+                    *mine.provide()
 
             )
         }
@@ -58,7 +58,7 @@ class GeneralCommands(plugin: MineMe) : MineMeCommand(plugin) {
         messageManager.sendMessage(sender, MineMeLang.COMMAND_MINE_LIST_HEADER)
         for (mine in mines) {
             messageManager.sendMessage(sender, MineMeLang.COMMAND_MINE_LIST_FOUND,
-                    *mine.exportVariables()
+                    *mine.provide()
             )
 
         }
@@ -79,7 +79,7 @@ class GeneralCommands(plugin: MineMe) : MineMeCommand(plugin) {
                 return
             }
             val lines = plugin.configManager.getValue(MineMeConfigValue.COMMAND_MINE_INFO)
-            val variables = mine.exportVariables()
+            val variables = mine.provide()
             for (line in lines) {
                 plugin.messageManager.sendMessage(sender, translateVariables(line, *variables))
             }
@@ -108,7 +108,7 @@ class GeneralCommands(plugin: MineMe) : MineMeCommand(plugin) {
             plugin.messageManager.sendMessage(
                     sender,
                     MineMeLang.COMMAND_CLEAR_MINE_SUCCESS,
-                    *mine.exportVariables()
+                    *mine.provide()
             )
         }
 

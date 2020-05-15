@@ -13,7 +13,7 @@ import me.ddevil.mineme.craft.util.toWE
 import me.ddevil.shiroi.craft.util.toVector
 import me.ddevil.util.getInt
 import me.ddevil.util.getMap
-import me.ddevil.util.vector.DoubleVector2
+import me.ddevil.util.math.vector.DoubleVector2
 import org.bukkit.inventory.ItemStack
 
 class CylindricalMine : AbstractHologramMine<CylinderRegion> {

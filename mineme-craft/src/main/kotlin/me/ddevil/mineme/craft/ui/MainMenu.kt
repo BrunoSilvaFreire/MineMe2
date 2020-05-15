@@ -72,7 +72,7 @@ class MainMenu(plugin: MineMe) : FileLangShiroiMenu<MineMe, MineMeConfigSource>(
                                 val mine = unloadedMine.loadMine(plugin.mineManager)
                                 plugin.messageManager.sendMessage(sender,
                                         MineMeLang.MINE_LOADED,
-                                        *mine.exportVariables())
+                                        *mine.provide())
                             } else {
                                 plugin.messageManager.sendMessage(sender, MineMeLang.UNABLE_TO_LOAD_MINE,
                                         MessageVariable("name", unloadedMine.file.name)
